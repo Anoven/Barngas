@@ -1,0 +1,16 @@
+body,html {
+    background: #efefef;
+    padding: 10px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 100;
+}
+.padded{
+    padding:50px;
+    padding-top: 80px;
+}
+.md-text{
+    font-size:20px;
+}
+.sm-text{
+    font-size:14px;
+}

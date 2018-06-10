@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-sm navbar-light fixed-top">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarNav">
+		<a class=".navbar-brand" href="/dashboard" style="font-size:30px; color: #777; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
+			<b>Harvest Measurement</b>
+		</a>
+		<ul class="navbar-nav ml-auto">
+				
+            <% if(!(user)){ %>
+				<li class="nav-item">
+					<a class="nav-link" href="/login">Login</a>
+				</li>
+            <% } else { %>
+            	<li><a class="nav-link" href="/graph">Graphs</a></li>
+                <li><a class="nav-link" href="/dashboard">Sensor Configuration</a></li>
+                <li><a class="nav-link" href="/dashboard">Signed in as <%= user.username %></a></li>
+                <li><a class="nav-link" href="/logout">Logout</a></li>
+            <% } %>
+		</ul>
+	</div>
+</nav>
