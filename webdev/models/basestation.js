@@ -4,6 +4,12 @@ module.exports = function(sequelize, Sequelize) {
             autoIncrement: true,
             primaryKey: true,
             type: Sequelize.INTEGER
+        },
+        name: {
+            type: Sequelize.STRING
+        },
+        description: {
+            type: Sequelize.STRING
         }
     });
     return BaseStation;

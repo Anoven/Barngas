@@ -8,6 +8,12 @@ module.exports = function(sequelize, Sequelize) {
         type: {
             type: Sequelize.STRING,
             allowNull: false
+        },
+        name: {
+            type: Sequelize.STRING
+        },
+        description: {
+            type: Sequelize.STRING
         }
     });
     return Sensor;

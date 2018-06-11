@@ -1,23 +1,25 @@
-<nav class="navbar navbar-expand-sm navbar-light fixed-top">
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="navbarNav">
-		<a class=".navbar-brand" href="/dashboard" style="font-size:30px; color: #777; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
-			<b>Harvest Measurement</b>
+<nav class="navbar navbar-expand-sm navbar-light fixed-top navbar-shrink">
+	<div class="container-fluid">
+		<a class=".navbar-brand" href="/dashboard" style="font-size:24px; color: #777;">
+			<b class="nav-link">Harvest Measurement</b>
 		</a>
-		<ul class="navbar-nav ml-auto">
-				
-            <% if(!(user)){ %>
-				<li class="nav-item">
-					<a class="nav-link" href="/login">Login</a>
-				</li>
-            <% } else { %>
-            	<li><a class="nav-link" href="/graph">Graphs</a></li>
-                <li><a class="nav-link" href="/dashboard">Sensor Configuration</a></li>
-                <li><a class="nav-link" href="/dashboard">Signed in as <%= user.username %></a></li>
-                <li><a class="nav-link" href="/logout">Logout</a></li>
-            <% } %>
-		</ul>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+	            <% if(!(user)){ %>
+					<li class="nav-item">
+						<a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+					</li>
+	            <% } else { %>
+	            	<li><a class="nav-link" href="/graph"><i class="fas fa-chart-line"></i> Graphs</a></li>
+	                <li><a class="nav-link" href="/configure"> <i class="fas fa-wrench"></i> Configuration</a></li>
+	                <li><a class="nav-link" href="/myprofile"><i class="fas fa-user"></i> <%= user.username %> </a></li>
+	                <li><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+	            <% } %>
+			</ul>
+		</div>
 	</div>
 </nav>

@@ -11,7 +11,6 @@ let start_date: Date = new Date("2018-6-1");
 let end_date: Date = new Date("2018-6-30");
 
 
-
 function newDate(days: number): Date {
     return moment().add(days, 'd').toDate();
 }
@@ -23,7 +22,7 @@ function randomColor(): string {
     let r: number = Math.round(Math.random() * (255));
     let g: number = Math.round(Math.random() * (255));
     let b: number = Math.round(Math.random() * (255));
-    let a: number = 0.2;
+    let a: number = 1;
     let to_return: string = 'rgb('+ r +','+ g +','+ b +''+ a +')'
     console.log(to_return);
     return to_return;
@@ -45,6 +44,7 @@ function randomScalingFactor() {
     return Math.random();
 }
 
+let baseline: Array<{t: Date, y: number}> = [{t: start_date, y: 0.3}, {t: end_date, y: 0.3}];
 let dataset1: Array<{t: Date, y: number}> = [];
 let dataset2: Array<{t: Date, y: number}> = [];
 
@@ -73,6 +73,15 @@ let myChart = new Chart(ctx, {
             newDateString(5),
             newDateString(6)],
         datasets: [
+                {
+                    label: 'Baseline',
+                    backgroundColor: 'rgb(255,0,0,1)',
+                    pointHoverBackgroundColor: 'rgb(255,0,0,1)',
+                    borderColor: 'rgb(255,0,0,1)',
+                    pointHoverBorderColor: 'rgb(255,0,0,1)',
+                    fill: false,
+                    data: baseline
+                },
                 {
                     label: 'series 1',
                     backgroundColor: color1,
@@ -116,5 +125,8 @@ let myChart = new Chart(ctx, {
                 }
             }]
         },
+        legend: {
+            position: 'left'
+        }
         }
 });
