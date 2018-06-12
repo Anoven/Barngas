@@ -30,7 +30,7 @@ export default function passport_module(passport: any){
 	            });
 	        } 
 	        else{
-	            console.log(req.body);
+	            // console.log(req.body);
 	            let hashed_password = generate_hash(password);
 	            let data = {
 	                username: username,

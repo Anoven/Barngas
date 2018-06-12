@@ -1,72 +1,71 @@
 import Sequelize = require('sequelize'); 
 
 export function create_triggers(models: any){
-	models.sequelize.query(
-        'DROP TRIGGER IF EXISTS aggregate_hourly;'
-    );
     models.sequelize.query(
-        ' CREATE TRIGGER aggregate_hourly AFTER INSERT ON rawData' +
+        ' CREATE TRIGGER aggregate_hourly AFTER INSERT ON raw_data' +
         ' FOR EACH ROW' +
         ' BEGIN' +
-            ' DELETE FROM hourlyData' +
-            ' WHERE year = new.year AND month = new.month AND day = new.day AND hour = new.hour AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId;' +
+            ' DELETE FROM hourly_data' +
+            ' WHERE year = new.year AND month = new.month AND day = new.day AND hour = new.hour AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id;' +
 
-            ' INSERT INTO hourlyData (id, value, year, month, day, hour, createdAt, updatedAt, sensorId, sensorGroupId, basestationId)' + 
-            ' SELECT NULL as id, avg(value) as value, year, month, day, hour, NOW() as createdAt, NOW() as updatedAt, sensorId, sensorGroupId, basestationId' +
-            ' FROM rawData' +
-            ' WHERE year = new.year AND month = new.month AND day = new.day AND hour = new.hour AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId' +
-            ' GROUP BY year, month, day, hour, sensorId, sensorGroupId, basestationId;' + 
+            ' INSERT INTO hourly_data (id, value, year, month, day, hour, createdAt, updatedAt, sensor_id, group_id, basestation_id)' + 
+            ' SELECT NULL as id, avg(value) as value, year, month, day, hour, MAX(createdAt) as createdAt, MAX(updatedAt) as updatedAt, sensor_id, group_id, basestation_id' +
+            ' FROM raw_data' +
+            ' WHERE year = new.year AND month = new.month AND day = new.day AND hour = new.hour AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id' +
+            ' GROUP BY year, month, day, hour, sensor_id, group_id, basestation_id;' + 
         ' END;'
-    );
+    ).catch(function(onRejected: Sequelize.DatabaseError){
+        console.log('TRIGGER aggregate_hourly ALREADY CREATED');
+    });
+
     models.sequelize.query(
-        'DROP TRIGGER IF EXISTS aggregate_daily;'
-    );
-    models.sequelize.query(
-        ' CREATE TRIGGER aggregate_daily AFTER INSERT ON hourlyData' +
+        ' CREATE TRIGGER aggregate_daily AFTER INSERT ON hourly_data' +
         ' FOR EACH ROW' +
         ' BEGIN' +
-            ' DELETE FROM dailyData' +
-            ' WHERE year = new.year AND month = new.month AND day = new.day AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId;' +
+            ' DELETE FROM daily_data' +
+            ' WHERE year = new.year AND month = new.month AND day = new.day AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id;' +
 
-            ' INSERT INTO dailyData (id, value, year, month, day, createdAt, updatedAt, sensorId, sensorGroupId, basestationId)' + 
-            ' SELECT NULL as id, avg(value) as value, year, month, day, NOW() as createdAt, NOW() as updatedAt, sensorId, sensorGroupId, basestationId' +
-            ' FROM hourlyData' +
-            ' WHERE year = new.year AND month = new.month AND day = new.day AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId' +
-            ' GROUP BY year, month, day, sensorId, sensorGroupId, basestationId;' + 
+            ' INSERT INTO daily_data (id, value, year, month, day, createdAt, updatedAt, sensor_id, group_id, basestation_id)' + 
+            ' SELECT NULL as id, avg(value) as value, year, month, day, MAX(createdAt) as createdAt, MAX(updatedAt) as updatedAt, sensor_id, group_id, basestation_id' +
+            ' FROM hourly_data' +
+            ' WHERE year = new.year AND month = new.month AND day = new.day AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id' +
+            ' GROUP BY year, month, day, sensor_id, group_id, basestation_id;' + 
         ' END;'
-    );
+    ).catch(function(onRejected: Sequelize.DatabaseError){
+        console.log('TRIGGER aggregate_daily ALREADY CREATED');
+    });
+
     models.sequelize.query(
-        'DROP TRIGGER IF EXISTS aggregate_monthly;'
-    );
-    models.sequelize.query(
-        ' CREATE TRIGGER aggregate_monthly AFTER INSERT ON dailyData' +
+        ' CREATE TRIGGER aggregate_monthly AFTER INSERT ON daily_data' +
         ' FOR EACH ROW' +
         ' BEGIN' +
-            ' DELETE FROM monthlyData' +
-            ' WHERE year = new.year AND month = new.month AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId;' +
+            ' DELETE FROM monthly_data' +
+            ' WHERE year = new.year AND month = new.month AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id;' +
 
-            ' INSERT INTO monthlyData (id, value, year, month, createdAt, updatedAt, sensorId, sensorGroupId, basestationId)' + 
-            ' SELECT NULL as id, avg(value) as value, year, month, NOW() as createdAt, NOW() as updatedAt, sensorId, sensorGroupId, basestationId' +
-            ' FROM dailyData' +
-            ' WHERE year = new.year AND month = new.month AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId' +
-            ' GROUP BY year, month, sensorId, sensorGroupId, basestationId;' + 
+            ' INSERT INTO monthly_data (id, value, year, month, createdAt, updatedAt, sensor_id, group_id, basestation_id)' + 
+            ' SELECT NULL as id, avg(value) as value, year, month, MAX(createdAt) as createdAt, MAX(updatedAt) as updatedAt, sensor_id, group_id, basestation_id' +
+            ' FROM daily_data' +
+            ' WHERE year = new.year AND month = new.month AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id' +
+            ' GROUP BY year, month, sensor_id, group_id, basestation_id;' + 
         ' END;'
-    );
+    ).catch(function(onRejected: Sequelize.DatabaseError){
+        console.log('TRIGGER aggregate_monthly ALREADY CREATED');
+    });
+
     models.sequelize.query(
-        'DROP TRIGGER IF EXISTS aggregate_yearly;'
-    );
-    models.sequelize.query(
-        ' CREATE TRIGGER aggregate_yearly AFTER INSERT ON monthlyData' +
+        ' CREATE TRIGGER aggregate_yearly AFTER INSERT ON monthly_data' +
         ' FOR EACH ROW' +
         ' BEGIN' +
-            ' DELETE FROM yearlyData' +
-            ' WHERE year = new.year AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId;' +
+            ' DELETE FROM yearly_data' +
+            ' WHERE year = new.year AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id;' +
 
-            ' INSERT INTO yearlyData (id, value, year, createdAt, updatedAt, sensorId, sensorGroupId, basestationId)' + 
-            ' SELECT NULL as id, avg(value) as value, year, NOW() as createdAt, NOW() as updatedAt, sensorId, sensorGroupId, basestationId' +
-            ' FROM monthlyData' +
-            ' WHERE year = new.year AND sensorId = new.sensorId AND sensorGroupId = new.sensorGroupId AND basestationId = new.basestationId' +
-            ' GROUP BY year, sensorId, sensorGroupId, basestationId;' + 
+            ' INSERT INTO yearly_data (id, value, year, createdAt, updatedAt, sensor_id, group_id, basestation_id)' + 
+            ' SELECT NULL as id, avg(value) as value, year, MAX(createdAt) as createdAt, MAX(updatedAt) as updatedAt, sensor_id, group_id, basestation_id' +
+            ' FROM monthly_data' +
+            ' WHERE year = new.year AND sensor_id = new.sensor_id AND group_id = new.group_id AND basestation_id = new.basestation_id' +
+            ' GROUP BY year, sensor_id, group_id, basestation_id;' + 
         ' END;'
-    );
+    ).catch(function(onRejected: Sequelize.DatabaseError){
+        console.log('TRIGGER aggregate_yearly ALREADY CREATED');
+    });
 }

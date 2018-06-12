@@ -1,5 +1,5 @@
 module.exports = function(sequelize, Sequelize) {
-    var YearlyData = sequelize.define('yearlyData', {
+    var YearlyData = sequelize.define('yearly_data', {
         id: {
             autoIncrement: true,
             primaryKey: true,

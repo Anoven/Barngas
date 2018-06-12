@@ -1,5 +1,5 @@
 module.exports = function(sequelize, Sequelize) {
-    var DailyData = sequelize.define('dailyData', {
+    var DailyData = sequelize.define('daily_data', {
         id: {
             autoIncrement: true,
             primaryKey: true,

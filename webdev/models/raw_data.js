@@ -1,5 +1,5 @@
 module.exports = function(sequelize, Sequelize) {
-    var RawData = sequelize.define('rawData', {
+    var RawData = sequelize.define('raw_data', {
         id: {
             autoIncrement: true,
             primaryKey: true,

@@ -28,35 +28,69 @@ Object.keys(db).forEach(function(modelName) {
 
 // set up foreign key constraints
 //basestation
-db['user'].hasOne(db['basestation']);   //each basestation has a user
+db['user'].hasMany(db['basestation'], {foreignKey: 'user_id'});   //each basestation has a user\
+db['basestation'].belongsTo(db['user'], {foreignKey: 'user_id'})
 
 //group
-db['basestation'].hasOne(db['sensorGroup']);  // each group has a basestation
+db['basestation'].hasMany(db['group'], {foreignKey: 'basestation_id'});  // each group has a basestation
+db['group'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
 
 //sensor
-db['sensorGroup'].hasOne(db['sensor']);       // each sensor has a group
-db['basestation'].hasOne(db['sensor']);       // each sensor has a basestation - this is probably not going to be used
+db['group'].hasMany(db['sensor'], {foreignKey: 'group_id'});       // each sensor has a group
+db['sensor'].belongsTo(db['group'], {foreignKey: 'group_id'});
+
+db['basestation'].hasMany(db['sensor'], {foreignKey: 'basestation_id'});       // each sensor has a basestation 
+db['sensor'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
 
 //data tables - each data entry is associated with a sensor, a basestation, and a group
-db['sensor'].hasOne(db['rawData']);
-db['sensorGroup'].hasOne(db['rawData']);
-db['basestation'].hasOne(db['rawData']);
+db['sensor'].hasMany(db['raw_data'], {foreignKey: 'sensor_id'});
+db['raw_data'].belongsTo(db['sensor'], {foreignKey: 'sensor_id'});
 
-db['sensor'].hasOne(db['hourlyData']);
-db['sensorGroup'].hasOne(db['hourlyData']);
-db['basestation'].hasOne(db['hourlyData']);
+db['group'].hasMany(db['raw_data'], {foreignKey: 'group_id'});
+db['raw_data'].belongsTo(db['group'], {foreignKey: 'group_id'});
 
-db['sensor'].hasOne(db['dailyData']);
-db['sensorGroup'].hasOne(db['dailyData']);
-db['basestation'].hasOne(db['dailyData']);
+db['basestation'].hasMany(db['raw_data'], {foreignKey: 'basestation_id'});
+db['raw_data'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
 
-db['sensor'].hasOne(db['monthlyData']);
-db['sensorGroup'].hasOne(db['monthlyData']);
-db['basestation'].hasOne(db['monthlyData']);
+// Hourly _data
+db['sensor'].hasMany(db['hourly_data'], {foreignKey: 'sensor_id'});
+db['hourly_data'].belongsTo(db['sensor'], {foreignKey: 'sensor_id'});
 
-db['sensor'].hasOne(db['yearlyData']);
-db['sensorGroup'].hasOne(db['yearlyData']);
-db['basestation'].hasOne(db['yearlyData']);
+db['group'].hasMany(db['hourly_data'], {foreignKey: 'group_id'});
+db['hourly_data'].belongsTo(db['group'], {foreignKey: 'group_id'});
+
+db['basestation'].hasMany(db['hourly_data'], {foreignKey: 'basestation_id'});
+db['hourly_data'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
+
+// Daily _data
+db['sensor'].hasMany(db['daily_data'], {foreignKey: 'sensor_id'});
+db['daily_data'].belongsTo(db['sensor'], {foreignKey: 'sensor_id'});
+
+db['group'].hasMany(db['daily_data'], {foreignKey: 'group_id'});
+db['daily_data'].belongsTo(db['group'], {foreignKey: 'group_id'});
+
+db['basestation'].hasMany(db['daily_data'], {foreignKey: 'basestation_id'});
+db['daily_data'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
+
+// Monthly _data
+db['sensor'].hasMany(db['monthly_data'], {foreignKey: 'sensor_id'});
+db['monthly_data'].belongsTo(db['sensor'], {foreignKey: 'sensor_id'});
+
+db['group'].hasMany(db['monthly_data'], {foreignKey: 'group_id'});
+db['monthly_data'].belongsTo(db['group'], {foreignKey: 'group_id'});
+
+db['basestation'].hasMany(db['monthly_data'], {foreignKey: 'basestation_id'});
+db['monthly_data'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
+
+//Yearly _data
+db['sensor'].hasMany(db['yearly_data'], {foreignKey: 'sensor_id'});
+db['yearly_data'].belongsTo(db['sensor'], {foreignKey: 'sensor_id'});
+
+db['group'].hasMany(db['yearly_data'], {foreignKey: 'group_id'});
+db['yearly_data'].belongsTo(db['group'], {foreignKey: 'group_id'});
+
+db['basestation'].hasMany(db['yearly_data'], {foreignKey: 'basestation_id'});
+db['yearly_data'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
 
 console.log(db);
 db.sequelize = sequelize;

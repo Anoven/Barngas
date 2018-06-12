@@ -8,14 +8,14 @@ c = conn.cursor()
 
 c.execute('''SET FOREIGN_KEY_CHECKS = 0;
 			drop table basestations;
-			drop table dailyData;
-			drop table hourlyData;
-			drop table monthlyData;
-			drop table rawData;
-			drop table sensorGroups;
+			drop table daily_data;
+			drop table hourly_data;
+			drop table monthly_data;
+			drop table raw_data;
+			drop table groups;
 			drop table sensors;
 			drop table users;
-			drop table yearlyData;
+			drop table yearly_data;
 			SET FOREIGN_KEY_CHECKS = 0;
 			drop triggers;
 			''')
