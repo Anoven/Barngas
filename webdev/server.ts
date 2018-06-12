@@ -2,11 +2,11 @@ import express = require('express');
 import http = require("http")
 import html = require('ejs');
 import passport = require('passport');
-import passport_local = require("passport-local")
-import session = require("express-session")
-import body_parser = require('body-parser')
-import Sequelize = require('sequelize')
-import method_override = require('method-override')
+import passport_local = require("passport-local");
+import session = require("express-session");
+import body_parser = require('body-parser');
+import Sequelize = require('sequelize');
+import method_override = require('method-override');
 
 const app = express();
 app.set("view engine", "ejs");
@@ -56,14 +56,14 @@ app.use(function(req, res, next){
 // -----------------------------------------------------------------------------------------------------
 // passport setup
 
-import {passport_module} from './logic/passport'
+import passport_module from './logic/passport'
 passport_module(passport);
 // -----------------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------------
 // routes setup
 
-import {routes_module} from './logic/routes'
-routes_module(app, passport);
+import routes_module from './logic/routes'
+routes_module(app, passport, models);
 // -----------------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------------
 // Start listening

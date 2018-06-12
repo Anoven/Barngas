@@ -6,7 +6,7 @@ import bcrypt = require('bcrypt-nodejs');
 let models = require("../models");
 const User = models.user;
 
-export function passport_module(passport: any){
+export default function passport_module(passport: any){
 	let LocalStrategy = passport_local.Strategy;
 	passport.use('local-register', new LocalStrategy({
 	    usernameField: 'reg_username',
