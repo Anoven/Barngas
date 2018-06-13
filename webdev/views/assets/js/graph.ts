@@ -2,63 +2,82 @@ import Chart = require('chart.js');
 import moment = require('moment');
 import * as $ from 'jquery';
 
-
-
-// let labels_per_size: {[size: string]: number; } = {
-//     'hourly': 60,
-//     'daily': 24,
-//     'monthly': 31,
-//     'yearly': 12
-// };
-
 let timeFormat: string = 'MM/DD/YYYY HH:mm';
-// Chart.Chart.defaults.global.defaultFontSize = 16;
+let curr_datetime: moment.Moment = moment();
+console.log(curr_datetime.format(timeFormat));
 
-let htmlCanvas: any = document.getElementById("myChart")
-let ctx: CanvasRenderingContext2D = htmlCanvas.getContext('2d');
-
-let myChart = new Chart(ctx, {    
-    type: 'line',
-    options: {
-        title: {
-            text: 'Chart.js Time Scale'
-        },
-        scales: {
-            xAxes: [{
-                type: 'time',
-                time: {
-                    parser: timeFormat,
-                    tooltipFormat: 'll HH:mm'
-                },
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Time',
-                    // fontSize: 8
-                }
-            }],
-            yAxes: [{
-                scaleLabel: {
-                    display: true,
-                    labelString: '% of Lower Explosive Limit (LEL)'
-                }
-            }]
-        },
-        legend: {
-            position: 'left'
+function makeChart(ctx: CanvasRenderingContext2D, title: string, xLabel: string, yLabel: string): Chart {
+    return new Chart(ctx, {
+        type: 'line',
+        options: {
+            title: {
+                text: 'Chart.js Time Scale'
+            },
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        parser: timeFormat,
+                        tooltipFormat: 'll HH:mm'
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: xLabel,
+                        // fontSize: 8
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: yLabel
+                    }
+                }]
+            },
+            legend: {
+                position: 'left'
+            }
         }
-    }
-});
-
-
-let methane_limit_dataset: Chart.ChartDataSets = {
-    label: 'Methane LEL',
-    backgroundColor: 'rgb(255,0,0,1)',
-    pointHoverBackgroundColor: 'rgb(255,0,0,1)',
-    borderColor: 'rgb(255,0,0,1)',
-    pointHoverBorderColor: 'rgb(255,0,0,1)',
-    fill: false,    
-    data: []
+    });
 }
+
+function makeDataset(label: string): Chart.ChartDataSets{
+    return {
+        label: 'Methane LEL',
+        backgroundColor: 'rgb(255,0,0,1)',
+        pointHoverBackgroundColor: 'rgb(255,0,0,1)',
+        borderColor: 'rgb(255,0,0,1)',
+        pointHoverBorderColor: 'rgb(255,0,0,1)',
+        fill: false,    
+        data: []
+    }
+}
+let htmlCanvas: any = document.getElementById("methane_chart");
+let methane_chart = makeChart(htmlCanvas.getContext('2d'), 'Methane', 'Time', '% of LEL');
+
+htmlCanvas = document.getElementById("amonia_chart");
+let amonia_chart = makeChart(htmlCanvas.getContext('2d'), 'Amonia', 'Time', '% of LEL');
+
+htmlCanvas = document.getElementById("hydrogen_sulfide_chart");
+let hydrogen_sulfide_chart = makeChart(htmlCanvas.getContext('2d'), 'Hydrogen Sulfide', 'Time', '% of LEL');
+
+htmlCanvas = document.getElementById("carbon_dioxide_chart");
+let carbon_dioxide_chart = makeChart(htmlCanvas.getContext('2d'), 'Carbon Dioxide', 'Time', '% of LEL');
+
+htmlCanvas = document.getElementById("temp_chart");
+let temp_chart = makeChart(htmlCanvas.getContext('2d'), 'Temperature', 'Time', '% of LEL');
+
+htmlCanvas = document.getElementById("humidity_chart");
+let humidity_chart = makeChart(htmlCanvas.getContext('2d'), 'Relative Humidity', 'Time', '% of LEL');
+
+
+
+let methane_min: Chart.ChartDataSets = makeDataset('Methane LEL');
+let amonia_min: Chart.ChartDataSets = makeDataset('Amonia Lower Limit');
+let hydrogen_sulfide_min: Chart.ChartDataSets = makeDataset('Hydrogen Sulfide Lower Limit');
+let carbon_dioxide_min: Chart.ChartDataSets = makeDataset('Carbon Dioxide LEL');
+let temp_max: Chart.ChartDataSets = makeDataset('Temperature Upper Limit');
+let temp_min: Chart.ChartDataSets = makeDataset('Temperature Lower Limit');
+let humidity_min: Chart.ChartDataSets = makeDataset('Humidity Lower Limit');
 
 function randomColor(): string {
     let r: number = Math.round(Math.random() * (255));
@@ -79,70 +98,70 @@ function parseData(data: Array<{t: string, y: number, sensor_name: string}>): Ar
     return parsed_data;
 }
 
-function createLabels(start_date: Date, end_date: Date): Array<string> {
+function setLimitBounds(start_datetime: Date, finsih_datetime: Date): void {
+    methane_min.data = [{t: start_datetime, y: 30}, {t: finsih_datetime, y: 30}];
+    amonia_min.data = [{t: start_datetime, y: 30}, {t: finsih_datetime, y: 30}];
+    carbon_dioxide_min.data = [{t: start_datetime, y: 30}, {t: finsih_datetime, y: 30}];
+    hydrogen_sulfide_min.data = [{t: start_datetime, y: 30}, {t: finsih_datetime, y: 30}];
+    temp_min.data = [{t: start_datetime, y: 10}, {t: finsih_datetime, y: 10}];
+    temp_max.data = [{t: start_datetime, y: 40}, {t: finsih_datetime, y: 40}];
+    humidity_min.data = [{t: start_datetime, y: 30}, {t: finsih_datetime, y: 30}];
+}
+
+function createLabels(): Array<string> {
     let time_interval_size: string = $('#time_interval_size_select').val().toString();
 
+    let label_datetime: moment.Moment = moment(curr_datetime);
     
     let labels: Array<string> = [];
-    let num = 10;
     // let num = labels_per_size[time_interval_size];
     if (time_interval_size === 'hourly') {
-        let date = new Date();
-        let year = start_date.getFullYear();
-        let month = start_date.getMonth();
-        let day = start_date.getDay();
-        let hour = start_date.getHours();
-
-        let first_date = new Date(year, month, day, hour, 1);    //get first date of the year
-        let start_moment: moment.Moment = moment(first_date.toString());
-
-        let temp_moment: moment.Moment = start_moment;
-        for(let i = 0 ; i < 10; i++){
-            temp_moment.add(6, 'minute');
+        labels.push(label_datetime.startOf('hour').format(timeFormat));
+        let temp_moment: moment.Moment = label_datetime.startOf('hour');
+        labels.push(temp_moment.format(timeFormat));
+        for(let i = 0 ; i < 2; i++){
+            temp_moment.add(15, 'day');
             labels.push(temp_moment.format(timeFormat));
         }
+        labels.push(label_datetime.endOf('hour').format(timeFormat));
+        setLimitBounds(label_datetime.startOf('hour').toDate(), label_datetime.endOf('hour').toDate());
+        
+    
     }
     else if (time_interval_size === 'daily') {
-        let date = new Date();
-        let year = start_date.getFullYear();
-        let month = start_date.getMonth();
-        let day = start_date.getDay();
-
-        let first_date = new Date(year, month, day, 1);    //get first date of the year
-        let start_moment: moment.Moment = moment(first_date.toString());
-
-        let temp_moment: moment.Moment = start_moment;
-        for(let i = 0 ; i < 12; i++){
-            temp_moment.add(2, 'hour');
-            labels.push(temp_moment.format(timeFormat));
-        }
-    }
-    else if (time_interval_size === 'monthly') {
-        let date = new Date();
-        let year = start_date.getFullYear();
-        let month = start_date.getMonth();
-
-        let first_date = new Date(year, month, 1);    //get first date of the year
-        let start_moment: moment.Moment = moment(first_date.toString());
-
-        let temp_moment: moment.Moment = start_moment;
-        for(let i = 0 ; i < 8; i++){
+        labels.push(label_datetime.startOf('day').format(timeFormat));
+        let temp_moment: moment.Moment = label_datetime.startOf('day');
+        labels.push(temp_moment.format(timeFormat));
+        for(let i = 0 ; i < 4; i++){
             temp_moment.add(4, 'day');
             labels.push(temp_moment.format(timeFormat));
         }
+        labels.push(label_datetime.endOf('day').format(timeFormat));
+
+        setLimitBounds(label_datetime.startOf('day').toDate(), label_datetime.endOf('day').toDate());
+    }
+    else if (time_interval_size === 'monthly') {
+        labels.push(label_datetime.startOf('month').format(timeFormat));
+        let temp_moment: moment.Moment = label_datetime.startOf('month');
+        labels.push(temp_moment.format(timeFormat));
+        for(let i = 0 ; i < 2; i++){
+            temp_moment.add(7, 'day');
+            labels.push(temp_moment.format(timeFormat));
+        }
+        labels.push(label_datetime.endOf('month').format(timeFormat));
+
+        setLimitBounds(label_datetime.startOf('month').toDate(), label_datetime.endOf('month').toDate());
     }
     else if (time_interval_size === 'yearly') {
-        let date = new Date();
-        let year = start_date.getFullYear();
-
-        let first_date = new Date(year, 1, 1);    //get first date of the year
-        let start_moment: moment.Moment = moment(first_date.toString());
-
-        let temp_moment: moment.Moment = start_moment;
-        for(let i = 0 ; i < 12; i++){
+        labels.push(label_datetime.startOf('year').format(timeFormat));
+        let temp_moment: moment.Moment = label_datetime.startOf('year');
+        for(let i = 0 ; i < 10; i++){
             temp_moment.add(1, 'month');
             labels.push(temp_moment.format(timeFormat));
         }
+        labels.push(label_datetime.endOf('year').format(timeFormat));
+
+        setLimitBounds(label_datetime.startOf('year').toDate(), label_datetime.endOf('year').toDate());
     }
     console.log(labels);
     return labels;
@@ -176,19 +195,38 @@ function processResponse(response: any) {
     console.log(response);
 
     // Parse The data and create a dataset
-    let parsedData: Array<{t: Date, y: number}> = parseData(response.data);
-    let labels = createLabels(parsedData[0].t, parsedData[parsedData.length - 1].t);
-    let series: string = response.data[0].sensor.name;
-    let dataset = createDataSet(series, parsedData);
-    
-    //Create the threshold lines
-    methane_limit_dataset.data = [{t: parsedData[0].t, y: 30}, {t: parsedData[parsedData.length - 1].t, y: 30}]
+    if (response.data.length != 0){
+        let parsedData: Array<{t: Date, y: number}> = parseData(response.data);
+        let labels = createLabels();
+        let series: string = response.data[0].sensor.name;
+        let dataset = createDataSet(series, parsedData);
+        
+        //Create the threshold lines
+        // methane_min.data = [{t: parsedData[0].t, y: 30}, {t: parsedData[parsedData.length - 1].t, y: 30}]
 
-    //Add the relevant data to the chart
-    clearDataSets(myChart);
+        //Add the relevant data to the chart
+        clearDataSets(methane_chart);
+        clearDataSets(amonia_chart);
+        clearDataSets(carbon_dioxide_chart);
+        clearDataSets(hydrogen_sulfide_chart);
+        clearDataSets(temp_chart);
+        clearDataSets(humidity_chart);
 
-    addDataset(myChart, labels, methane_limit_dataset);
-    addDataset(myChart, labels, dataset);
+        addDataset(methane_chart, labels, methane_min); 
+        addDataset(amonia_chart, labels, amonia_min); 
+        addDataset(carbon_dioxide_chart, labels, carbon_dioxide_min); 
+        addDataset(hydrogen_sulfide_chart, labels, hydrogen_sulfide_min); 
+        addDataset(temp_chart, labels, temp_max); 
+        addDataset(temp_chart, labels, temp_min); 
+        addDataset(humidity_chart, labels, humidity_min); 
+
+        addDataset(methane_chart, labels, dataset);
+    }
+    else {
+       let labels = createLabels();
+       methane_chart.data.labels = labels; 
+       methane_chart.update();
+    }
 }
 
 $('#time_interval_size_select').change(function() {
@@ -196,12 +234,35 @@ $('#time_interval_size_select').change(function() {
     $.get('/graph/'+ time_interval_size, function(response) {
         processResponse(response);
     });
+    // processResponse({data: []});
 });
 
 $(document).ready(function() {
     let time_interval_size: string = $('#time_interval_size_select').val().toString();
-    $.get('/graph/'+ time_interval_size, function(response) {
-        processResponse(response);
+    $.get('/graph/user', function(response) {
+        let devices: any = response.data;
+        console.log(devices);
+        if (devices != null){
+            for(let i = 0 ; i < devices.length; i++){
+                if(devices[i].group_name == null) {
+                    $('#basestation_select').append($('<option>', {
+                        value: devices[i].basestation_name,
+                        text: devices[i].basestation_name
+                    }));
+                } 
+                else if(devices[i].basestation_name == null) {
+                    $('#group_select').append($('<option>', {
+                        value: devices[i].group_name,
+                        text: devices[i].group_name
+                    }));
+                }
+            }
+        }
+        
+    }).then(function(val){
+        $.get('/graph/'+ time_interval_size, function(response) {
+            processResponse(response);
+        });
     });
 });
 

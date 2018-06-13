@@ -48,9 +48,34 @@ export default function routes_module(app: any, passport: any, models: any): any
             });
         })
     } 
-
     app.get("/graph",isLoggedIn, function(req: express.Request,res: express.Response){
         res.render("graph");
+    });
+
+    app.get("/graph/user",isLoggedIn, function(req: express.Request,res: express.Response){
+        let session: Express.Session = req.session;
+        
+        //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
+        // let user_id = session.passport.user
+        // console.log(user_id);
+        let user_id: number = 1;
+
+         models.sequelize.query(
+            ' (SELECT b.name AS basestation_name, NULL AS group_name' +
+                ' FROM users AS u, basestations AS b' +
+                ' WHERE u.id = ' + user_id + ')' +
+            ' UNION' +
+            ' (SELECT null AS basestation_name, g.name AS group_name' +
+                ' FROM users AS u, basestations AS b, groups AS g' +
+                ' WHERE u.id = ' + user_id + ' AND u.id = b.user_id AND b.id = g.basestation_id);'
+        ).then(function(data: any) {
+            if(!data){
+                res.send({'data': null});
+            }
+            else {
+                res.send({'data': data[0]});
+            }
+        })
     });
     app.post("/graph/select",isLoggedIn, function(req: express.Request,res: express.Response){
         // res.render("graph");

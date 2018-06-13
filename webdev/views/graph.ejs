@@ -9,29 +9,173 @@
 </head>
 <body>
 	<% include ./partials/nav %>
+
 	<div class="container-fluid padded">
-		<div class="row">
-		</div>
 		<div class="row">
 			<div class="col-sm-8">
 				<select id = 'time_interval_size_select'>
-					<!-- <option value="raw">Raw</option> -->
 					<option value="hourly">Hourly</option>
-					<option value="daily">Daily</option>
+					<option value="daily" selected="selected">Daily</option>
 					<option value="monthly">Monthly</option>
 					<option value="yearly">Yearly</option>
 				</select>
+
+				<select id = 'basestation_select'>
+					<option value="null">None</option>
+				</select>
+
+				<select id = 'group_select'>
+					<option value="null">None</option>
+				</select>
+
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm-8">
-				<div class="container-fluid">
-					<div class="chart-container" style="position: relative; height:20vh; width:80vw">
-						<canvas id="myChart" width="800" height="400"></canvas>
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="methane-tab" data-toggle="tab" href="#methane" role="tab" aria-controls="methane" aria-selected="true">Methane</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="amonia-tab" data-toggle="tab" href="#amonia" role="tab" aria-controls="amonia" aria-selected="false">Amonia</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="hydrogen-sulfide-tab" data-toggle="tab" href="#hydrogen-sulfide" role="tab" aria-controls="hydrogen-sulfide" aria-selected="false">Hydrogen Sulfide</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="carbon-dioxide-tab" data-toggle="tab" href="#carbon-dioxide" role="tab" aria-controls="carbon-dioxide" aria-selected="false">Carbon Dioxide</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="temp-tab" data-toggle="tab" href="#temp" role="tab" aria-controls="temp" aria-selected="false">Temperature</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="humidity-tab" data-toggle="tab" href="#humidity" role="tab" aria-controls="humidity" aria-selected="false">Relative Humidity</a>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="methane" role="tabpanel" aria-labelledby="methane-tab">
+				<div class="container-fluid" style="margin-top: 2%;">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="methane_chart" width="400" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="amonia" role="tabpanel" aria-labelledby="amonia-tab">
+				<div class="container-fluid" style="margin-top: 2%;">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="amonia_chart" width="400" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="hydrogen-sulfide" role="tabpanel" aria-labelledby="hydrogen-sulfide-tab">
+				<div class="container-fluid" style="margin-top: 2%;">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="hydrogen_sulfide_chart" width="400" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="carbon-dioxide" role="tabpanel" aria-labelledby="carbon-dioxide-tab">
+				<div class="container-fluid" style="margin-top: 2%;">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="carbon_dioxide_chart" width="400" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="temp" role="tabpanel" aria-labelledby="temp-tab">
+				<div class="container-fluid" style="margin-top: 2%;">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="temp_chart" width="400" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="humidity" role="tabpanel" aria-labelledby="humidity-tab">
+				<div class="container-fluid" style="margin-top: 2%;">	
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="humidity_chart" width="400" height="150"></canvas>
 					</div>
 				</div>
 			</div>
 		</div>
+		<!-- </div> -->
+
+		<!-- <div class="row">
+			<div class="col-sm-8">
+				<select id = 'time_interval_size_select'>
+					<option value="hourly">Hourly</option>
+					<option value="daily" selected="selected">Daily</option>
+					<option value="monthly">Monthly</option>
+					<option value="yearly">Yearly</option>
+				</select>
+
+				<select id = 'basestation_select'>
+					<option value="null">None</option>
+				</select>
+
+				<select id = 'group_select'>
+					<option value="null">None</option>
+				</select>
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="container-fluid">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="methane_chart" width="400" height="100"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-12">
+				<div class="container-fluid">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="amonia_chart" width="400" height="100"></canvas>
+					</div>
+				</div>
+			</div>
+
+			
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="container-fluid">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="hydrogen_sulfide_chart" width="400" height="100"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-12">
+				<div class="container-fluid">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="carbon_dioxide_chart" width="400" height="100"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="container-fluid">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="temp_chart" width="400" height="100"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-12">
+				<div class="container-fluid">
+					<div class="chart-container" style="position: relative; height:100%; width:100%">
+						<canvas id="humidity_chart" width="400" height="100"></canvas>
+					</div>
+				</div>
+			</div>
+		</div> -->
+
 	</div>
 
 	<script type="text/javascript" src="./assets/js/jquery-3.3.1.min.js"></script>
