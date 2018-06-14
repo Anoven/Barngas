@@ -21,38 +21,12 @@ export default function routes_module(app: any, passport: any, models: any): any
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     // Graphing Page
-    function query_data(data_model: any, sensor_id: number, group_id: number, basestation_id: number): any {
-        // Helper function for graphing page
-        return new Promise((resolve: any, reject: any) => {
-            let sensor = models.sensor;
-            data_model.findAll({
-                attributes: [['updatedAt', 't'], ['value', 'y']],
-                where: {
-                    sensor_id: sensor_id,
-                    group_id: group_id,
-                    basestation_id: basestation_id
-                },
-                include: [{
-                    model: sensor,
-                    as: 'sensor',
-                    attributes: ['name']
-                }],
-                order: ['updatedAt']
-            }).then(function(data: any) {
-                if(!data) {
-                    // console.log('no data');
-                    resolve([]);
-                }
-                // console.log('found raw data: ' + raw_data.length + "lines");
-                resolve(data);
-            });
-        })
-    } 
+    
     app.get("/graph",isLoggedIn, function(req: express.Request,res: express.Response){
         res.render("graph");
     });
 
-    app.get("/graph/user",isLoggedIn, function(req: express.Request,res: express.Response){
+    app.get("/graph/basestations",isLoggedIn, function(req: express.Request,res: express.Response){
         let session: Express.Session = req.session;
         
         //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
@@ -61,52 +35,128 @@ export default function routes_module(app: any, passport: any, models: any): any
         let user_id: number = 1;
 
          models.sequelize.query(
-            ' (SELECT b.name AS basestation_name, NULL AS group_name' +
+            ' SELECT b.id as id, b.name AS name, b.description as description' +
                 ' FROM users AS u, basestations AS b' +
-                ' WHERE u.id = ' + user_id + ')' +
-            ' UNION' +
-            ' (SELECT null AS basestation_name, g.name AS group_name' +
-                ' FROM users AS u, basestations AS b, groups AS g' +
-                ' WHERE u.id = ' + user_id + ' AND u.id = b.user_id AND b.id = g.basestation_id);'
+                ' WHERE u.id = ' + user_id + ';'
         ).then(function(data: any) {
             if(!data){
-                res.send({'data': null});
+                res.send({'data': []});
             }
             else {
                 res.send({'data': data[0]});
             }
         })
     });
-    app.post("/graph/select",isLoggedIn, function(req: express.Request,res: express.Response){
-        // res.render("graph");
+
+    app.get("/graph/groups",isLoggedIn, function(req: express.Request,res: express.Response){
+        let session: Express.Session = req.session;
+        
+        //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
+        // let user_id = session.passport.user
+        // console.log(user_id);
+        let user_id: number = 1;
+
+         models.sequelize.query(
+            ' SELECT g.id AS id, g.name AS name, g.description as description, b.id AS basestation_id' +
+                ' FROM users AS u, basestations AS b, groups AS g' +
+                ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id;'
+        ).then(function(data: any) {
+            if(!data){
+                res.send({'data': []});
+            }
+            else {
+                res.send({'data': data[0]});
+            }
+        })
+    });
+    function query_data(data_model: any, basestation_id: number, group_id: number,  start_date: string, end_date: string): any {
+        // Helper function for graphing page
+        if (group_id ==  null){
+            return new Promise((resolve: any, reject: any) => {
+                models.sequelize.query(
+                    ' SELECT m.updatedAt AS t, m.value AS y, s.id as id, s.name as name, s.type as type' +
+                    ' FROM ' + data_model + ' AS m, sensors  AS s' +
+                    ' WHERE s.id = m.sensor_id AND m.basestation_id = ' + basestation_id + ' AND m.updatedAt >= ' + start_date + ' AND m.updatedAt < ' + end_date +
+                    ' ORDER BY m.updatedAt;'
+                ).then(function(data: any) {
+                    if(!data) {
+                        resolve([]);
+                    }
+                    console.log(data[0].length);
+                    resolve(data[0]);
+                });
+            });
+        }
+        else {
+          return new Promise((resolve: any, reject: any) => {
+                models.sequelize.query(
+                    ' SELECT m.updatedAt AS t, m.value AS y, s.id as id, s.name as name, s.type as type' +
+                    ' FROM ' + data_model + ' AS m, sensors  AS s' +
+                    ' WHERE s.id = m.sensor_id AND m.group_id = ' + group_id + ' AND m.basestation_id = ' + basestation_id + ' AND m.updatedAt >= ' + start_date + ' AND m.updatedAt <= ' + end_date +
+                    ' ORDER BY m.updatedAt;'
+                ).then(function(data: any) {
+                    if(!data) {
+                        resolve([]);
+                    }
+                    console.log(data.length);
+                    resolve(data[0]);
+                });
+            });  
+        }
+    } 
+
+    app.post('/graph/data', isLoggedIn, function(req: express.Request,res: express.Response){
         console.log(req.body);
-        let time_view: string = req.body.time_view
+        let time_unit = req.body.time_unit;
+        let start = new Date(req.body.start_date).toISOString().slice(0, 19).replace('T', ' ');
+        let end = new Date(req.body.end_date).toISOString().slice(0, 19).replace('T', ' ');
 
-        res.redirect('/graph/' + time_view);
-    });
+        let basestation_id = Number(req.body.b_id);
+        let group_id = req.body.g_id;
+        if(group_id === '' || group_id === 'None'){
+            group_id = null;
+        }
+        else{
+            group_id = Number(group_id);
+        }
 
-    app.get("/graph/hourly",isLoggedIn, function(req: express.Request,res: express.Response){
-        query_data(models.raw_data, 1, 1, 1).then(function(data: any) {
-            res.send({'data': data})
-        });
-    });
+        if(req.body.time_unit === 'hourly') {
+            let start_date = '"' + start + '"'
+            let end_date = '"' + end + '"'
 
-    app.get("/graph/daily",isLoggedIn, function(req: express.Request,res: express.Response){
-        query_data(models.hourly_data, 1, 1, 1).then(function(data: any) {
-            res.send({'data': data})
-        });
-    });
+            query_data('raw_data', basestation_id, group_id, start_date, end_date).then(function(data: any) {
+                res.send({'data': data})
+            });
+        }
+        else if(req.body.time_unit === 'daily') {
+            let start_date = '"' + start + '"'
+            let end_date = '"' + end + '"'
 
-    app.get("/graph/monthly",isLoggedIn, function(req: express.Request,res: express.Response){
-        query_data(models.daily_data, 1, 1, 1).then(function(data: any) {
-            res.send({'data': data})
-        });
-    });
+            query_data('hourly_data', basestation_id, group_id, start_date, end_date).then(function(data: any) {
+                res.send({'data': data})
+            });
+            
+        }
+        else if(req.body.time_unit === 'monthly') {
+            let start_date = '"' + start + '"'
+            let end_date = '"' + end + '"'
 
-    app.get("/graph/yearly",isLoggedIn, function(req: express.Request,res: express.Response){
-        query_data(models.monthly_data, 1, 1, 1).then(function(data: any) {
-            res.send({'data': data})
-        });
+            query_data('daily_data', basestation_id, group_id, start_date, end_date).then(function(data: any) {
+                res.send({'data': data})
+            });
+        }
+        else if(req.body.time_unit === 'yearly') {
+            let start_date = '"' + start + '"'
+            let end_date = '"' + end + '"'
+
+            query_data('monthly_data', basestation_id, group_id, start_date, end_date).then(function(data: any) {
+                res.send({'data': data})
+            });
+        }
+
+        else {
+            res.send({'data': []})
+        }
     });
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
