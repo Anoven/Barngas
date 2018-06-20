@@ -7,34 +7,87 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="./assets/css/all.css">
 	<link rel="stylesheet" type="text/css" href="./assets/css/nav.css">
+	<link rel="stylesheet" type="text/css" href="./assets/css/login.css">
 </head>
 <body>
 	<% include ./partials/nav %>
 	<div class="container-fluid padded">
-		<div class="row">
-		</div>
-		<div class="row">
-			<div class="col-sm-8">
-				<div class="container-fluid">
-					<!-- Add a result for every video in the database for the searched course -->
-						<div class="row search-result">
-							<div class="col-sm-4 thumbnail-container">
-							PROFILE
-							</div>
-							<div class="col-sm-8">
-								<div class="row details-container">
-									<div class="md-text title">
-									</div>
-								</div>
-							</div>
+
+		<div class="row justify-content-center">
+			<form id="profile_form" class="", action="/myprofile", method="POST">
+				<div class="login-form-1">
+					<div class="main-login-form">
+						<div class="login-group">
+		            		<div class="form-group">
+			            		<label for="profile_first_name" class="sr-only"></label>
+			            		<!-- <input type="text" class="form-control" id="profile_first_name" name="profile_first_name" autocomplete="off" placeholder=<%= user.first_name %>> -->
+			            		<div class="form-control">
+			            			First Name: 
+			            		</div>
+			            	</div>
+			            	<div class="form-group">
+			            		<label for="profile_last_name" class="sr-only"></label>
+			            		<div class="form-control">
+			            			Last Name: 
+			            		</div>
+			            	</div>
+			            	<div class="form-group">
+			            		<label for="profile_email" class="sr-only"></label>
+			            		<div class="form-control">
+			            			Email: 
+			            		</div>
+			            	</div>
+			            	<div class="form-group">
+			            		<label for="profile_phone" class="sr-only"></label>
+			            		<div class="form-control">
+			            			Phone: 
+			            		</div>
+			            	</div>
+			            </div>	
+		            </div>
+	            </div>
+            
+				<div class="login-form-1">
+					<div class="main-login-form">
+						<div class="login-group">
+							<% if(!(user)){ %>
+								<li class="nav-item">
+									<a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+								</li>
+				            <% } else { %>
+				            	
+			            		<input type="hidden" id="profile_user_id" name="profile_user_id" value=<%= user.id %>>
+			            		<div class="form-group">
+				            		<label for="profile_first_name" class="sr-only"></label>
+				            		<input type="text" class="form-control" id="profile_first_name" name="profile_first_name" autocomplete="off" placeholder=<%= user.first_name %>>
+				            	</div>
+				            	<div class="form-group">
+				            		<label for="profile_last_name" class="sr-only"></label>
+				            		<input type="text" class="form-control" id="profile_last_name" name="profile_last_name" autocomplete="off" placeholder=<%= user.last_name %>>
+				            	</div>
+				            	<div class="form-group">
+				            		<label for="profile_email" class="sr-only"></label>
+				            		<input type="text" class="form-control" id="profile_email" name="profile_email" autocomplete="off" placeholder=<%= user.email %>>
+				            	</div>
+				            	<div class="form-group">
+				            		<label for="profile_phone" class="sr-only"></label>
+				            		<input type="text" class="form-control" id="profile_phone" name="profile_phone" autocomplete="off" placeholder=<%= user.phone %>>
+				            	</div>
+				            <% } %>
 						</div>
+					</div>
 				</div>
-			</div>
+				<button type="submit" class="btn btn-primary" id='change_btn' disabled style=" position: relative; left: 0px; width: 83.5%; margin-top: 20px;">
+                    Change
+                </button>
+
+			</form>
 		</div>
 	</div>
 
 
 	<script type="text/javascript" src="./assets/js/jquery-3.3.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./assets/js/profilebundle.js"></script>
 </body>
 </html>

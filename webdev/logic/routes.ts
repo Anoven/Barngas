@@ -56,7 +56,7 @@ export default function routes_module(app: any, passport: any, models: any): any
         // console.log(user_id);
         let user_id: number = 1;
 
-         models.sequelize.query(
+        models.sequelize.query(
             ' SELECT g.id AS id, g.name AS name, g.description as description, b.id AS basestation_id' +
                 ' FROM users AS u, basestations AS b, groups AS g' +
                 ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id;'
@@ -69,6 +69,7 @@ export default function routes_module(app: any, passport: any, models: any): any
             }
         })
     });
+
     function query_data(data_model: any, basestation_id: number, group_id: number,  start_date: string, end_date: string): any {
         // Helper function for graphing page
         if (group_id ==  null){
@@ -164,11 +165,96 @@ export default function routes_module(app: any, passport: any, models: any): any
     app.get("/configure",isLoggedIn, function(req: express.Request,res: express.Response){
         res.render("configure");
     });
+
+    app.get("/configure/basestations",isLoggedIn, function(req: express.Request,res: express.Response){
+        let session: Express.Session = req.session;
+        
+        //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
+        // let user_id = session.passport.user
+        // console.log(user_id);
+        let user_id: number = 1;
+
+         models.sequelize.query(
+            ' SELECT b.id as id, b.name AS name, b.description as description' +
+                ' FROM users AS u, basestations AS b' +
+                ' WHERE u.id = ' + user_id + ';'
+        ).then(function(data: any) {
+            if(!data){
+                res.send({'data': []});
+            }
+            else {
+                res.send({'data': data[0]});
+            }
+        })
+    });
+
+    app.get("/configure/groups",isLoggedIn, function(req: express.Request,res: express.Response){
+        let session: Express.Session = req.session;
+        
+        //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
+        // let user_id = session.passport.user
+        // console.log(user_id);
+        let user_id: number = 1;
+
+        models.sequelize.query(
+            ' SELECT g.id AS id, g.name AS name, g.description as description, b.id AS basestation_id' +
+                ' FROM users AS u, basestations AS b, groups AS g' +
+                ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id;'
+        ).then(function(data: any) {
+            if(!data){
+                res.send({'data': []});
+            }
+            else {
+                res.send({'data': data[0]});
+            }
+        })
+    });
+    app.get("/configure/sensors",isLoggedIn, function(req: express.Request,res: express.Response){
+        let session: Express.Session = req.session;
+        
+        //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
+        // let user_id = session.passport.user
+        // console.log(user_id);
+        let user_id: number = 1;
+
+        models.sequelize.query(
+            ' SELECT s.id AS id, s.name AS name, s.description as description, g.id as group_id, b.id AS basestation_id' +
+                ' FROM users AS u, basestations AS b, groups AS g, sensors AS s' +
+                ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id AND g.id = s.group_id;'
+        ).then(function(data: any) {
+            if(!data){
+                res.send({'data': []});
+            }
+            else {
+                res.send({'data': data[0]});
+            }
+        })
+    });
+
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     // Profile Page
     app.get("/myprofile",isLoggedIn, function(req: express.Request,res: express.Response){
         res.render("profile");
+    });
+
+    app.post("/myprofile",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.profile_user_id && req.body.profile_first_name && req.body.profile_last_name && req.body.profile_email && req.body.profile_phone) {
+            let id: number = Number(req.body.profile_user_id);
+            let fn: string = req.body.profile_first_name;
+            let ln: string = req.body.profile_last_name;
+            let email: string = req.body.profile_email;
+            let phone: string = req.body.profile_phone;
+            models.sequelize.query(
+                ' UPDATE users' +
+                    ' SET first_name = "' + fn + '", last_name = "' + ln + '", email = "' + email + '", phone = "' + phone + '"' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.redirect('/myprofile');  
+            });
+        }
+        
     });
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------

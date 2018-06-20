@@ -10,24 +10,51 @@
 </head>
 <body>
 	<% include ./partials/nav %>
+
 	<div class="container-fluid padded">
-		<div class="row">
-		</div>
-		<div class="row">
-			<div class="col-sm-8">
-				<div class="container-fluid">
-					<!-- Add a result for every video in the database for the searched course -->
-						<div class="row search-result">
-							<div class="col-sm-4 thumbnail-container">
-							Configure
-							</div>
-							<div class="col-sm-8">
-								<div class="row details-container">
-									<div class="md-text title">
-									</div>
+		<div class="card">
+			<div class="card-header">
+				<div class='row'>
+					<div class = 'col-sm-11'>
+						<!-- <input type="text" class="form-control" id="colFormLabelLg" placeholder="basestation name"> -->
+						<label>basestation name</label>
+					</div>
+					<div class = 'col-sm-1'>
+						<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="right: 0px;">
+						<i class="fas fa-plus"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class='row'>
+					<div class = 'col-sm-12'>
+						<textarea style="width: 90%; margin: 10px;">description</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="collapse" id="collapseExample">
+				<div class="container-fluid" style="margin: 10px;">
+					<div class="card">
+						<div class="card-header">
+							<div class='row'>
+								<div class = 'col-sm-11'>
+									<input type="text" class="form-control" id="colFormLabelLg" placeholder="something" style="">
 								</div>
+								<div class = 'col-sm-1'>
+									<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#innerCollapse" aria-expanded="false" aria-controls="innerCollapse" style="right: 0px;">
+									<i class="fas fa-plus"></i>
+									</button>
+								</div>
+
+								
 							</div>
 						</div>
+						<div class="collapse" id="innerCollapse">
+							<div class="card card-body">
+								Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -36,5 +63,6 @@
 
 	<script type="text/javascript" src="./assets/js/jquery-3.3.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./assets/js/configurebundle.js"></script>
 </body>
 </html>
