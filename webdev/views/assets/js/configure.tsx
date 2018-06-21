@@ -2,9 +2,23 @@ import Chart = require('chart.js');
 import moment = require('moment');
 import * as $ from 'jquery';
 
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+
+
 import {Basestation, Group, Sensor} from './util';
 
 let basestations: {[id: number]: Basestation} = {}; 
+
+// ReactDOM.render(
+// 	<div>
+// 	<h1>Hello, Welcome to the first page</h1>
+// 	</div>,
+// 	  document.getElementById("root")
+// );
+
+
+
 
 $(document).ready(function() {
 	$.get('/configure/basestations', function(response) {

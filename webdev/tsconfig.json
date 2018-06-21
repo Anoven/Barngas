@@ -3,6 +3,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "target": "es6",
+        "jsx": "react",
         "removeComments": true,
         "noImplicitAny": true,
         "baseUrl": ".",
@@ -10,5 +11,8 @@
     },
     "include": [
       "./**/*"
-    ]
+    ],
+    "exclude": [
+        "node_modules"
+      ]
 }
