@@ -162,8 +162,8 @@ export default function routes_module(app: any, passport: any, models: any): any
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     // Configure Page
-    app.get("/configure",isLoggedIn, function(req: express.Request,res: express.Response){
-        res.render("configure");
+    app.get("/basestations",isLoggedIn, function(req: express.Request,res: express.Response){
+        res.render("config_basestations");
     });
 
     app.get("/configure/basestations",isLoggedIn, function(req: express.Request,res: express.Response){
@@ -229,6 +229,76 @@ export default function routes_module(app: any, passport: any, models: any): any
                 res.send({'data': data[0]});
             }
         })
+    });
+
+    app.post("/basestations/updateName",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.name) {
+            let name = req.body.name;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE basestations' +
+                    ' SET name = "' + name + '", updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+    app.post("/basestations/updateDescription",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.description) {
+            let description = req.body.description;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE basestations' +
+                    ' SET description = "' + description + '",  updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+
+    // ------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
+    app.get("/groups",isLoggedIn, function(req: express.Request,res: express.Response){
+        res.render("config_groups");
+    });
+
+    app.post("/groups/updateName",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.name) {
+            let name = req.body.name;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE groups' +
+                    ' SET name = "' + name + '", updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+    app.post("/groups/updateDescription",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.description) {
+            let description = req.body.description;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE groups' +
+                    ' SET description = "' + description + '",  updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+
+    // ------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------
+    app.get("/sensors",isLoggedIn, function(req: express.Request,res: express.Response){
+        res.render("config_sensors");
     });
 
     // ------------------------------------------------------------------------------------------
