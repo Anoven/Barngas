@@ -7,40 +7,75 @@ import {Basestation, Group, Sensor} from './util';
 
 let basestations: {[id: number]: Basestation} = {}; 
 
-export class Card extends React.Component<{id: number, name: string, descr: string}, {id: number, name: string, descr: string, expanded: boolean}> {
+class SensorNode extends React.Component<{}, {}> {
 	constructor(props: any) {
 		super(props);
-		this.state = {id: props.id, name: props.name, descr: props.descr, expanded: false};
-		this.toggleExpanded = this.toggleExpanded.bind(this);
 	}
 
-	toggleExpanded() {
-		this.setState(prevState => ({
-	    	expanded: !prevState.expanded
-	    }));	
+	dragStart(){
+
+	}
+
+	render(){
+		return(
+			<div 
+				className='sensor'
+				draggable={true}
+				onDragStart={this.dragStart}>
+			</div>
+		)
+	}
+}
+
+class Card extends React.Component<{id: number, name: string, descr: string}, {id: number, name: string, descr: string, sensors: Array<JSX.Element>}> {
+	constructor(props: any) {
+		super(props);
+		this.state = {id: props.id, name: props.name, descr: props.descr, sensors: [<SensorNode />]};
+		this.dragOver = this.dragOver.bind(this);
+		this.dragEnter = this.dragEnter.bind(this);
+		this.dragLeave = this.dragLeave.bind(this);
+		this.drop = this.drop.bind(this);
+	}
+
+	dragOver(e: React.DragEvent){
+		e.preventDefault();
+	}
+
+	dragEnter(e: React.DragEvent) {
+	    e.preventDefault()
+	    // this.className += " hovered"
+	}
+
+	dragLeave(e: React.DragEvent) {
+	    // this.className = "holder"
+	}
+
+	drop(e: React.DragEvent) {
+		this.setState({
+			sensors: this.state.sensors.concat([<SensorNode />])
+		})
+		console.log(this.state.sensors);
 	}
 
 	render() {
 		let expandIcon: JSX.Element;
 		let expandedButt: JSX.Element;
 
-		if(this.state.expanded) {
-		}
-		else {
-				
-		}
-
 		return (
-			<div className="card">
-
-				<span className="border border-primary rounded"></span>
+			<div 
+				className="sensorContainer"
+				onDragOver={this.dragOver}
+				onDragEnter={this.dragEnter}
+				onDragLeave={this.dragLeave}
+				onDrop={this.drop}>
+				{this.state.sensors}
 			</div>
 		)
 		
 	}
 }
 
-export class CardContainer extends React.Component<{dict: {[id: number]: Basestation}}, {dict: any}> {
+class CardContainer extends React.Component<{dict: {[id: number]: Basestation}}, {dict: any}> {
 	constructor(props: any) {
 		super(props);
 		this.state = {dict: props.dict};
@@ -111,31 +146,3 @@ $(document).ready(function() {
     	});
 	});
 });
-
-// .then(function() {
-//     	$.get('/basestations/groups', function(response) {
-// 	        let data = response.data;
-// 	        if(data.length > 0) {
-//                 for(let i = 0; i < data.length; i++) {
-//                     if(basestations[data[i].basestation_id]){
-//                     	let bs: Basestation = basestations[data[i].basestation_id];
-//                         bs.add_group(new Group(data[i].id, data[i].name, data[i].description));
-//                     }
-//                 }
-//             }
-// 	    }).then(function() {
-// 	    	$.get('/basestations/sensors', function(response) {
-// 		        let data = response.data;
-// 		        if(data.length > 0) {
-// 	                for(let i = 0; i < data.length; i++) {
-// 	                    if(basestations[data[i].basestation_id]){
-// 	                    	let bs: Basestation = basestations[data[i].basestation_id];
-// 	                    	if(bs.groups[data[i].group_id]) {
-// 	                    		let g = bs.groups[data[i].group_id];
-// 	                    		g.add_sensor(new Sensor(data[i].id, data[i].name, data[i].description));
-// 	                    	}
-// 	                    }
-// 	                }
-// 	            }
-// 	            console.log(basestations);
-// 	    	})
