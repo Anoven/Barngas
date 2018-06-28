@@ -301,6 +301,35 @@ export default function routes_module(app: any, passport: any, models: any): any
         res.render("config_sensors");
     });
 
+    app.post("/sensors/updateName",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.name) {
+            let name = req.body.name;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE sensors' +
+                    ' SET name = "' + name + '", updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+    app.post("/sensors/updateDescription",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.description) {
+            let description = req.body.description;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE sesors' +
+                    ' SET description = "' + description + '",  updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     // Profile Page

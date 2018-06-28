@@ -40,7 +40,7 @@ for i in range(1, 501):
 	datetime = 'NOW() + INTERVAL %d HOUR'%(i)
 	c.execute('INSERT INTO raw_data VALUES(%d, %f, YEAR(%s), MONTH(%s), DAY(%s), HOUR(%s), %s, %s, 1, 1, 1);'%(i, val, datetime, datetime, datetime, datetime, datetime, datetime))
 	c.execute('INSERT INTO raw_data VALUES(%d, %f, YEAR(%s), MONTH(%s), DAY(%s), HOUR(%s), %s, %s, 2, 1, 1);'%(500 + i, val2, datetime, datetime, datetime, datetime, datetime, datetime))
-	c.execute('INSERT INTO raw_data VALUES(%d, %f, YEAR(%s), MONTH(%s), DAY(%s), HOUR(%s), %s, %s, 3, 2, 1);'%(1000 + i, val3, datetime, datetime, datetime, datetime, datetime, datetime))
+	c.execute('INSERT INTO raw_data VALUES(%d, %f, YEAR(%s), MONTH(%s), DAY(%s), HOUR(%s), %s, %s, 3, 2, 2);'%(1000 + i, val3, datetime, datetime, datetime, datetime, datetime, datetime))
 	c.execute('INSERT INTO raw_data VALUES(%d, %f, YEAR(%s), MONTH(%s), DAY(%s), HOUR(%s), %s, %s, 4, 3, 2);'%(1500 + i, val4, datetime, datetime, datetime, datetime, datetime, datetime))
 
 conn.commit()
