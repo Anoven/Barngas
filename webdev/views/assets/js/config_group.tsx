@@ -7,7 +7,7 @@ import {ClickyComponent} from './config_components';
 
 let basestations: {[id: number]: Basestation} = {}; 
 
-class BSLabel extends ClickyComponent {
+class GroupLabel extends ClickyComponent {
 	constructor(props: any) {
 		super(props);
 	}
@@ -48,7 +48,7 @@ class BSLabel extends ClickyComponent {
 	}
 }
 
-class BSDescr extends ClickyComponent {
+class GroupDescr extends ClickyComponent {
 	constructor(props: any) {
 		super(props);
 	}
@@ -78,19 +78,86 @@ class BSDescr extends ClickyComponent {
 		}
 
 		return (
-				<div className='row align-items-center justify-content-between"'>
-			  		<div className = 'col-sm-11'>
-				        {this.text}
-			      	</div>
-			      	<div className = 'col=sm-1'>
-			      		{this.editButt}
-			      	</div>
-			    </div>
+			<div className='row align-items-center justify-content-between"'>
+		  		<div className = 'col-sm-11'>
+			        {this.text}
+		      	</div>
+		      	<div className = 'col=sm-1'>
+		      		{this.editButt}
+		      	</div>
+		    </div>
 		);
 	}
 }
 
-export class Card extends React.Component<{id: number, name: string, descr: string}, {id: number, name: string, descr: string, expanded: boolean}> {
+class NewGroupComp extends React.Component<{bid: string, name: string}, {bid: string, name: string, groupName: string, descr: string}> {
+	constructor(props: any) {
+		super(props);
+		this.state = {bid: props.bid, name: props.name, groupName: 'Group Name', descr: 'Description'};
+		this.addGroup = this.addGroup.bind(this);
+		this.updateName = this.updateName.bind(this);
+		this.updateDescr = this.updateDescr.bind(this);
+	}
+
+	addGroup() {
+		$.post('/groups/addGroup', {name: this.state.groupName, description: this.state.descr, bid: this.state.bid}, function(response) {
+			console.log(response.data);
+			document.location.reload();
+		})
+	}
+
+	updateName(e: React.ChangeEvent<HTMLInputElement>) {
+		this.setState({
+	    	groupName: e.target.value
+	    });
+	}
+
+	updateDescr(e: React.ChangeEvent<HTMLInputElement>) {
+		this.setState({
+	    	descr: e.target.value
+	    });
+	}
+
+	render() {
+		return (
+			<div>
+				<button 
+					className = 'btn btn-info' 
+					data-toggle="modal"
+					data-target= {'#' + this.state.name}
+					style = {{width: 'calc(100% - 10px)', height: '10vh', margin:'5px 5px'}}>
+					Add a New Group
+				</button>
+
+				<div className="modal fade" id = {this.state.name} role="dialog" aria-labelledby={this.state.name + 'label'} aria-hidden="true">
+					<div className="modal-dialog modal-dialog-centered" role="document">
+						<div className="modal-content">
+							<div className="modal-header">
+								<h5 className="modal-title" id={this.state.name + 'label'}>{'Add a new group to ' + this.state.name}</h5>
+
+								<button type="button" className="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+
+							<div className="modal-body">
+								<input type = 'text' className = 'form-control' autoFocus placeholder = {this.state.groupName} onChange = {this.updateName}></input>
+								<input type = 'text' className = 'form-control' autoFocus placeholder = {this.state.descr} onChange = {this.updateDescr}></input>
+							</div>
+
+							<div className="modal-footer">
+								<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" className="btn btn-primary" onClick = {this.addGroup}>Save changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
+
+class Card extends React.Component<{id: number, name: string, descr: string}, {id: number, name: string, descr: string, expanded: boolean}> {
 	constructor(props: any) {
 		super(props);
 		this.state = {id: props.id, name: props.name, descr: props.descr, expanded: false};
@@ -132,10 +199,10 @@ export class Card extends React.Component<{id: number, name: string, descr: stri
 				<div className="card-header">
 					<div className = 'row align-items-center'>
 						<div className = 'col-sm-3'>
-				  			<label className ="input-group-text bslabel-lg-2"> {'Group: '+this.state.id} </label>
+				  			<label className ="input-group-text bslabel-lg-2"> {'Group: '} </label>
 				  		</div>
 				  		<div className = 'col-sm-8'>
-				  			<BSLabel id = {this.state.id} name= {this.state.name} descr={this.state.descr} />
+				  			<GroupLabel id = {this.state.id} name= {this.state.name} descr={this.state.descr} />
 				  		</div>
 						<div className = 'col-sm-1'>
 							{expandedButt}
@@ -145,16 +212,15 @@ export class Card extends React.Component<{id: number, name: string, descr: stri
 
 				<div className="collapse" id={this.state.name}>
 					<div className="container-fluid inner-padded">
-						<BSDescr id = {this.state.id} name = {this.state.name} descr={this.state.descr} />
+						<GroupDescr id = {this.state.id} name = {this.state.name} descr={this.state.descr} />
 					</div>
 				</div>
 			</div>
 		)
-		
 	}
 }
 
-export class CardContainer extends React.Component<{dict: {[id: number]: Basestation}}, {dict: any}> {
+class CardContainer extends React.Component<{dict: {[id: number]: Basestation}}, {dict: any}> {
 	constructor(props: any) {
 		super(props);
 		this.state = {dict: props.dict};
@@ -170,6 +236,7 @@ export class CardContainer extends React.Component<{dict: {[id: number]: Basesta
 				let group = groups[gid];
 				cards.push(<Card id = {Number(gid)} name = {group.name} descr = {group.description}/>);
 			}
+			cards.push(<NewGroupComp bid = {bid} name = {this.state.dict[bid].name} />);
 		}
 		return cards;
 	}
@@ -206,6 +273,10 @@ $(document).ready(function() {
         }).then(function() {
         	console.log(basestations);
 			ReactDOM.render(<CardContainer dict = {basestations} />, document.getElementById('root'));
+    	}).then(function() {
+    		$('.modal').on('show', function () {
+			   $('input:text:visible:first').focus();
+			});
     	});
 	});
 });

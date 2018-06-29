@@ -423,7 +423,8 @@ $(document).ready(function() {
                 for(let gid in groups){
                     $('#group_select').append($('<option>', {
                         value: groups[gid].id,
-                        text: '(' + groups[gid].id + ')' + ' ' + groups[gid].name,
+                        // text: '(' + groups[gid].id + ')' + ' ' + groups[gid].name,
+                        text: '' + groups[gid].name,
                         title: groups[gid].description
                     }));    
                 }

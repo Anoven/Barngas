@@ -35,14 +35,14 @@ class SensorLabel extends ClickyComponent {
 		}
 
 		return (
-				<div className='row align-items-center'>
-			  		<div className = 'col-sm-10'>
-				        {this.text}
-			      	</div>
-			      	<div className = 'col=sm-1'>
-			      		{this.editButt}
-			      	</div>
-			    </div>
+			<div className='row align-items-center'>
+		  		<div className = 'col col-sm-10'>
+			        {this.text}
+		      	</div>
+		      	<div className = 'col=sm-1'>
+		      		{this.editButt}
+		      	</div>
+		    </div>
 		);
 	}
 }
@@ -66,7 +66,6 @@ class SensorDescr extends ClickyComponent {
 
 	render() {
 		super.setButtons(this.state.descr, 'btn-sm', 'form-control-sm', 'bslabel-sm');
-		console.log(this.state.descr);
 		if(this.state.edit) {
 			this.editButt =  this.editButtInputMode
 			this.text =  this.textInputMode;	
@@ -78,7 +77,7 @@ class SensorDescr extends ClickyComponent {
 
 		return (
 			<div className='row align-items-center justify-content-between"'>
-		  		<div className = 'col-sm-11'>
+		  		<div className = 'col col-sm-11'>
 			        {this.text}
 		      	</div>
 		      	<div className = 'col=sm-1'>
@@ -89,19 +88,31 @@ class SensorDescr extends ClickyComponent {
 	}
 }
 
-class SensorSelect extends React.Component<{groups: {[id: number]: Group}}, {groups: {[id: number]: Group}}>{
+class SensorSelect extends React.Component<{id: number, groups: {[id: number]: Group}, gid: string}, {id: number, groups: {[id: number]: Group}, gid: string}>{
 	constructor(props: any) {
 		super(props);
-		this.state = {groups: props.groups}
+		this.state = {id: props.id, groups: props.groups, gid: props.gid}
+		this.updateGroup = this.updateGroup.bind(this);
 	}
 
 	renderOptions(): Array<JSX.Element>{
 		let options: Array<JSX.Element> = [];
 		for(let gid in this.state.groups) {
 			let group = this.state.groups[gid];
-			options.push(<option value = {gid} > {'(' + gid + ') ' + this.state.groups[gid].name} </option>);
+			if(this.state.gid === gid){
+				options.push(<option value = {gid} selected> {this.state.groups[gid].name} </option>);
+			}
+			else{
+				options.push(<option value = {gid} > {this.state.groups[gid].name} </option>);
+			}
 		}
 		return options;
+	}
+
+	updateGroup(e: React.ChangeEvent<HTMLSelectElement>) {
+		$.post('/sensors/updateGroup', {id: this.state.id, group_id: e.target.value}, function(response) {
+			console.log(response.data);
+		})
 	}
 
 	render() {
@@ -110,7 +121,7 @@ class SensorSelect extends React.Component<{groups: {[id: number]: Group}}, {gro
 
 		return (
 			<div>
-				<select>
+				<select className = "custom-select select-lg" onChange = {this.updateGroup}>
 					{options}
 				</select>
 			</div>
@@ -118,10 +129,10 @@ class SensorSelect extends React.Component<{groups: {[id: number]: Group}}, {gro
 	}
 }
 
-class Card extends React.Component<{id: number, name: string, descr: string, groups: {[id: number]: Group}}, {id: number, name: string, descr: string, expanded: boolean, groups: {[id: number]: Group}}> {
+class Card extends React.Component<{id: number, sensor: Sensor, groups: {[id: number]: Group}, gid: string}, {id: number, sensor: Sensor, groups: {[id: number]: Group}, gid: string, expanded: boolean}> {
 	constructor(props: any) {
 		super(props);
-		this.state = {id: props.id, name: props.name, descr: props.descr, expanded: false, groups: props.groups};
+		this.state = {id: props.id, sensor: props.sensor, groups: props.groups, gid: props.gid, expanded: false};
 		this.toggleExpanded = this.toggleExpanded.bind(this);
 	}
 
@@ -144,36 +155,57 @@ class Card extends React.Component<{id: number, name: string, descr: string, gro
 
 		expandedButt = 
 			<button 
-				className="btn btn-primary btn-lg" 
+				className="btn btn-primary btn-lg float-right" 
 				type="button" 
 				data-toggle="collapse" 
-				data-target={"#"+this.state.name} 
+				data-target={"#"+this.state.sensor.name} 
 				aria-expanded="false" 
-				aria-controls={this.state.name}
+				aria-controls={this.state.sensor.name}
 				onClick={this.toggleExpanded} >
 					{expandIcon}
 			</button>
+
+		let typeToString: {[type: string]: string} =   {'AMMONIA': 'Ammonia',
+														'CARBON DIOXIDE': 'Carbon Dioxide', 
+														'HYDROGEN SULFIDE': 'Hydrogen Sulfide',
+														'METHANE': 'Methane',
+														'HUMIDITY': 'Relative Humidity',
+														'TEMP': 'Temperature'};
+		let typeLabel: string = '';
+		if(typeToString[this.state.sensor.type]){
+			typeLabel = typeToString[this.state.sensor.type]
+		}
 
 		return (
 			<div className="card">
 				<div className="card-header">
 					<div className = 'row align-items-center'>
-						<div className = 'col-sm-3'>
-				  			<label className ="input-group-text bslabel-lg-2"> {'Sensor: '+this.state.id} </label>
+						<div className = 'col col-sm-1 text-center'>
+				  			<label className ="input-group-text bslabel-lg-2"> {this.state.id} </label>
 				  		</div>
-				  		<div className = 'col-sm-8'>
-				  			<SensorLabel id = {this.state.id} name= {this.state.name} descr={this.state.descr} />
+
+				  		<div className = 'col col-sm-2 text-center'>
+				  			<label className ="input-group-text bslabel-lg-2"> {typeLabel} </label>
 				  		</div>
-						<div className = 'col-sm-1'>
+				  		
+				  		<div className = 'col col-sm-6'>
+				  			<SensorLabel id = {this.state.id} name= {this.state.sensor.name} descr={this.state.sensor.description} />
+				  		</div>
+
+
+				  		<div className = 'col col-sm-2 text-center' style={{padding: '0px'}}>
+							<SensorSelect id = {this.state.id} groups = {this.state.groups} gid = {this.state.gid}/>
+						</div>
+
+						<div className = 'col col-sm-1 float-right'>
 							{expandedButt}
 						</div>
 					</div>
 				</div>
 
-				<div className="collapse" id={this.state.name}>
+				<div className="collapse" id={this.state.sensor.name}>
 					<div className="container-fluid inner-padded">
-						<SensorDescr id = {this.state.id} name = {this.state.name} descr={this.state.descr} />
-						<SensorSelect groups = {this.state.groups} />
+						<SensorDescr id = {this.state.id} name = {this.state.sensor.name} descr={this.state.sensor.description} />
 					</div>
 				</div>
 			</div>
@@ -190,14 +222,15 @@ export class CardContainer extends React.Component<{dict: {[id: number]: Basesta
 		let cards: Array<JSX.Element> = [];
 		for(let bid in this.state.dict) {
 			cards.push(<hr/>);
-			cards.push(<h4>{'Basestation ' + bid + ': ' + this.state.dict[bid].name}</h4>);
+			cards.push(<h4>{'' + bid + ': ' + this.state.dict[bid].name}</h4>);
 			cards.push(<hr/>);
 			let groups = this.state.dict[bid].groups;
 			for(let gid in groups){
+				console.log(gid);
 				let group = groups[gid];
 				for(let sid in group.sensors){
 					let sensor = group.sensors[sid];
-					cards.push(<Card id = {Number(sid)} name = {sensor.name} descr = {sensor.description} groups = {groups} />);
+					cards.push(<Card id = {Number(sid)} sensor = {group.sensors[sid]} groups = {groups} gid = {gid}/>);
 				}
 			}
 		}
@@ -242,7 +275,7 @@ $(document).ready(function() {
 	                    	let bs: Basestation = basestations[data[i].basestation_id];
 	                    	if(bs.groups[data[i].group_id]) {
 	                    		let g = bs.groups[data[i].group_id];
-	                    		g.add_sensor(new Sensor(data[i].id, data[i].name, data[i].description));
+	                    		g.add_sensor(new Sensor(data[i].id, data[i].name, data[i].description, data[i].type));
 	                    	}
 	                    }
 	                }

@@ -218,7 +218,7 @@ export default function routes_module(app: any, passport: any, models: any): any
         let user_id: number = 1;
 
         models.sequelize.query(
-            ' SELECT s.id AS id, s.name AS name, s.description as description, g.id as group_id, b.id AS basestation_id' +
+            ' SELECT s.id AS id, s.name AS name, s.description as description, s.type as type, g.id as group_id, b.id AS basestation_id' +
                 ' FROM users AS u, basestations AS b, groups AS g, sensors AS s' +
                 ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id AND g.id = s.group_id;'
         ).then(function(data: any) {
@@ -295,6 +295,21 @@ export default function routes_module(app: any, passport: any, models: any): any
         }
     });
 
+    app.post("/groups/addGroup",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.name && req.body.description && req.body.bid) {
+            let name = req.body.name;
+            let description = req.body.description;
+            let bid: number = Number(req.body.bid);
+            models.sequelize.query(
+                ' INSERT INTO groups' +
+                    ' VALUES(NULL, "' + name + '","' + description + '", NOW(), NOW(), ' + bid + ');'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     app.get("/sensors",isLoggedIn, function(req: express.Request,res: express.Response){
@@ -321,8 +336,23 @@ export default function routes_module(app: any, passport: any, models: any): any
             let description = req.body.description;
             let id = req.body.id;
             models.sequelize.query(
-                ' UPDATE sesors' +
+                ' UPDATE sensors' +
                     ' SET description = "' + description + '",  updatedAt = NOW()' +
+                    ' WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+
+    app.post("/sensors/updateGroup",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id && req.body.group_id) {
+            let group_id = req.body.group_id;
+            let id = req.body.id;
+            models.sequelize.query(
+                ' UPDATE sensors' +
+                    ' SET group_id = "' + Number(group_id) + '",  updatedAt = NOW()' +
                     ' WHERE id = ' + id + ';'
             ).then(function() {
                 res.send({'data': 'updated'});

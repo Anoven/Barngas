@@ -29,7 +29,7 @@ c.execute('DELETE FROM sensors WHERE name = "ammonia_test_1";')
 c.execute('INSERT INTO sensors VALUES(1, "METHANE", "methane_test_1", "methane testing", NOW(), NOW(), 1, 1);')
 c.execute('INSERT INTO sensors VALUES(2, "TEMP", "temp_test_1", "methane testing", NOW(), NOW(), 1, 1);')
 c.execute('INSERT INTO sensors VALUES(3, "METHANE", "methane_test_2", "temperature testing", NOW(), NOW(), 2, 2);')
-c.execute('INSERT INTO sensors VALUES(4, "AMMONIA", "ammonia_test_1", "temperature testing", NOW(), NOW(), 2, 2);')
+c.execute('INSERT INTO sensors VALUES(4, "AMMONIA", "ammonia_test_1", "temperature testing", NOW(), NOW(), 3, 2);')
 
 c.execute('TRUNCATE TABLE raw_data;')
 for i in range(1, 501):
