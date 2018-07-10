@@ -1,4 +1,4 @@
-import Chart = require('chart.js');
+import {Chart} from 'chart.js';
 import moment = require('moment');
 import * as $ from 'jquery';
 
@@ -21,9 +21,9 @@ let sensor_types: {[type: string]: JQuery<HTMLElement>} = {'AMMONIA': $('#ammoni
 let tab_types: {[id: string]: string} = {'ammonia-tab': 'AMMONIA' , 'carbon-dioxide-tab': 'CARBON DIOXIDE', 'hydrogen-sulfide-tab': 'HYDROGEN SULFIDE','methane-tab': 'METHANE', 'humidity-tab': 'HUMIDITY', 'temp-tab': 'TEMP'};
 let curr_tab_id: string = 'ammonia-tab';
 
-
 let htmlchart: any = document.getElementById("chart");
-let chart: Chart = new Chart(htmlchart.getContext('2d'), {
+let ctx = htmlchart.getContext('2d')
+let chart: Chart = new Chart(ctx, {
     type: 'line',
     options: {
         title: {
@@ -52,7 +52,11 @@ let chart: Chart = new Chart(htmlchart.getContext('2d'), {
         },
         legend: {
             position: 'right'
-        }
+        },
+        tooltips: {
+            intersect: true,
+            mode: 'point'
+        },
     }
 });
 
@@ -474,5 +478,39 @@ $(document).ready(function() {
             request_data(false);
         });
     });
+
+    document.getElementById("chart").onclick = function(event){
+        // var activePoints = chart.getElementsAtEvent(event);
+        let activePoint: {[id: number] : any} = chart.getElementAtEvent(event);
+        // console.log(activePoint);
+        if(Object.keys(activePoint).length != 0){
+            let datasetIndex: number = activePoint[0]._datasetIndex;
+            let pointIndex: number = activePoint[0]._index;
+            console.log(datasetIndex, pointIndex);
+            console.log(chart.data.datasets[datasetIndex].data[pointIndex]);
+        }
+        // use _datasetIndex and _index from each element of the activePoints array
+    };
+    // $("#cursor").width = $("#chart").width;
+    // $("#cursor").height = $("#chart").height;
+    $("#cursor").attr('width', $("#chart").width());
+    $("#cursor").attr('height', $("#chart").height());
+    $("#chart").on("mousemove", function(evt) {
+        var element = $("#cursor"), 
+                offsetLeft = element.offset().left,
+                domElement: any = element.get(0),
+                clientX = evt.clientX - offsetLeft,
+                htmlCanvas: any = element.get(0)
+                ctx = htmlCanvas.getContext('2d');
+         
+        ctx.clearRect(0, 0, domElement.width, domElement.height),
+            ctx.beginPath(),
+            ctx.moveTo(clientX, 0),
+            ctx.lineTo(clientX, domElement.height),
+            ctx.setLineDash([10, 10]),
+            ctx.strokeStyle = "#333",
+            ctx.stroke()
+    });
+
 });
 

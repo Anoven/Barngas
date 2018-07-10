@@ -72,12 +72,12 @@ export abstract class ClickyComponent extends React.Component<{id: number, name:
 	setButtons(placeholder: string, btnSizeClass: string, textSizeClass: string, labelSizeClass: string): void {
 		this.editButtInputMode = 
 			<button className = {"btn btn-secondary " + btnSizeClass} onMouseUp = {this.toggleFocusNameInput}>
-				<i className="fas fa-save"></i>
+				<i className="fas fa-save" title = 'Save Changes'></i>
 			</button>;
 
 		this.editButtViewMode = 
 			<button className = {"btn btn-secondary " + btnSizeClass} onMouseUp = {this.focusNameInput}>
-	        	<i className="fas fa-edit"></i>
+	        	<i className="fas fa-edit" title = 'Edit Text'></i>
 			</button>;
 
 		this.textInputMode = 

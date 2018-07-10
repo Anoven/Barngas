@@ -157,11 +157,12 @@ class NewGroupComp extends React.Component<{bid: string, name: string}, {bid: st
 	}
 }
 
-class Card extends React.Component<{id: number, name: string, descr: string}, {id: number, name: string, descr: string, expanded: boolean}> {
+class Card extends React.Component<{id: number, name: string, descr: string, canRemove: boolean}, {id: number, name: string, descr: string, expanded: boolean, canRemove: boolean}> {
 	constructor(props: any) {
 		super(props);
-		this.state = {id: props.id, name: props.name, descr: props.descr, expanded: false};
+		this.state = {id: props.id, name: props.name, descr: props.descr, expanded: false, canRemove: props.canRemove};
 		this.toggleExpanded = this.toggleExpanded.bind(this);
+		this.deleteGroup = this.deleteGroup.bind(this);
 	}
 
 	toggleExpanded() {
@@ -170,16 +171,40 @@ class Card extends React.Component<{id: number, name: string, descr: string}, {i
 	    }));	
 	}
 
+	deleteGroup() {
+		$.post('/groups/deleteGroup', {id: this.state.id}, function(response) {
+			console.log(response.data);
+			document.location.reload();
+		})
+	}
+
 	render() {
 		let expandIcon: JSX.Element;
 		let expandedButt: JSX.Element;
+		let removeButton: JSX.Element;
 
 		if(this.state.expanded) {
-			expandIcon = <i className="fas fa-minus"></i>
+			expandIcon = <i className="fas fa-minus" title = {'Hide Description'}></i>
 		}
 		else {
-			expandIcon = <i className="fas fa-plus"></i>
+			expandIcon = <i className="fas fa-plus" title = {'Show Description'}></i>
 				
+		}
+
+		if(this.state.canRemove) {
+			removeButton = 	<button className="btn btn-primary btn-lg"
+									title = {'Delete Group'}
+									onClick = {this.deleteGroup}>
+								<i className="fas fa-trash-alt"></i>
+							</button>
+		}
+		else {
+			removeButton = 	<button className="btn btn-primary btn-lg" 
+									title = {'Cannot Delete a Group with Sensors In It!'} 
+									onClick = {this.deleteGroup}
+									disabled >
+								<i className="fas fa-trash-alt"></i>
+							</button>
 		}
 
 		expandedButt = 
@@ -201,11 +226,14 @@ class Card extends React.Component<{id: number, name: string, descr: string}, {i
 						<div className = 'col-sm-3'>
 				  			<label className ="input-group-text bslabel-lg-2"> {'Group: '} </label>
 				  		</div>
-				  		<div className = 'col-sm-8'>
+				  		<div className = 'col-sm-7'>
 				  			<GroupLabel id = {this.state.id} name= {this.state.name} descr={this.state.descr} />
 				  		</div>
-						<div className = 'col-sm-1'>
-							{expandedButt}
+						<div className = 'col-sm-2'>
+							<div style = {{display: 'flex', justifyContent: 'space-around'}}>
+								{expandedButt}
+								{removeButton}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -234,7 +262,13 @@ class CardContainer extends React.Component<{dict: {[id: number]: Basestation}},
 			let groups = this.state.dict[bid].groups;
 			for(let gid in groups){
 				let group = groups[gid];
-				cards.push(<Card id = {Number(gid)} name = {group.name} descr = {group.description}/>);
+				if(Object.keys(group.sensors).length == 0){
+					cards.push(<Card id = {Number(gid)} name = {group.name} descr = {group.description} canRemove = {true} />);
+				}
+				else {
+					cards.push(<Card id = {Number(gid)} name = {group.name} descr = {group.description} canRemove = {false} />);
+				}
+				
 			}
 			cards.push(<NewGroupComp bid = {bid} name = {this.state.dict[bid].name} />);
 		}
@@ -271,11 +305,27 @@ $(document).ready(function() {
                 }
             }
         }).then(function() {
-        	console.log(basestations);
-			ReactDOM.render(<CardContainer dict = {basestations} />, document.getElementById('root'));
-    	}).then(function() {
-    		$('.modal').on('show', function () {
-			   $('input:text:visible:first').focus();
+	    	$.get('/configure/sensors', function(response) {
+		        let data = response.data;
+		        if(data.length > 0) {
+	                for(let i = 0; i < data.length; i++) {
+	                    if(basestations[data[i].basestation_id]){
+	                    	let bs: Basestation = basestations[data[i].basestation_id];
+	                    	if(bs.groups[data[i].group_id]) {
+	                    		let g = bs.groups[data[i].group_id];
+	                    		g.add_sensor(new Sensor(data[i].id, data[i].name, data[i].description, data[i].type));
+	                    	}
+	                    }
+	                }
+	            }
+	            console.log(basestations);
+	    	}).then(function() {
+	        	console.log(basestations);
+				ReactDOM.render(<CardContainer dict = {basestations} />, document.getElementById('root'));
+	    	}).then(function() {
+	    		$('.modal').on('show', function () {
+				   $('input:text:visible:first').focus();
+				});
 			});
     	});
 	});

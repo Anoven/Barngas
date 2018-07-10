@@ -310,6 +310,18 @@ export default function routes_module(app: any, passport: any, models: any): any
         }
     });
 
+    app.post("/groups/deleteGroup",isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.id) {
+            let id = Number(req.body.id);
+            models.sequelize.query(
+                ' DELETE FROM groups WHERE id = ' + id + ';'
+            ).then(function() {
+                res.send({'data': 'deleted'});
+            });
+        }
+    });
+
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     app.get("/sensors",isLoggedIn, function(req: express.Request,res: express.Response){
