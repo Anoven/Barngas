@@ -12,6 +12,7 @@ let end_datetime: moment.Moment  = moment(curr_datetime).endOf('day');
 let basestations: {[id: number]: Basestation } = {};
 
 let series_data: {[id: number]: Array<{t: Date, y: number}>} = {};
+let series_notes: {[id: number]: Array<{t: Date, note: string}>} = {};
 let series_names: {[id: number]: string} = {};           // names of the seires
 let series_types: {[id: number]: string} = {};           // types of the series
 let series_colors: {[id: number]: string} = {};          // color of each series
@@ -68,8 +69,8 @@ let temp_max: Chart.ChartDataSets = limit_series('Temperature Upper Limit');
 let temp_min: Chart.ChartDataSets = limit_series('Temperature Lower Limit');
 let humidity_min: Chart.ChartDataSets = limit_series('Humidity Lower Limit');
 
-//list of limits
-let limits:  {[type: string]: Array<Chart.ChartDataSets>} = {'AMMONIA': [ammonia_min], 'CARBON DIOXIDE': [carbon_dioxide_min], 'HYDROGEN SULFIDE': [hydrogen_sulfide_min], 'METHANE': [methane_min], 'HUMIDITY': [humidity_min], 'TEMP': [temp_max, temp_min]};
+//list of type_thresholds
+let type_thresholds:  {[type: string]: Array<Chart.ChartDataSets>} = {'AMMONIA': [ammonia_min], 'CARBON DIOXIDE': [carbon_dioxide_min], 'HYDROGEN SULFIDE': [hydrogen_sulfide_min], 'METHANE': [methane_min], 'HUMIDITY': [humidity_min], 'TEMP': [temp_max, temp_min]};
 
 function limit_series(label: string): Chart.ChartDataSets{
     return {
@@ -255,7 +256,6 @@ function adjust_tabs() {
             visible_tabs[0].addClass('active');
             curr_tab_id = visible_tabs[0].attr('id');
         }
-        
     }
     else {
         //If there is no data - then show nothing
@@ -274,7 +274,7 @@ function build_chart() {
     if(tab_types[curr_tab.attr('id')]) {
         curr_tab_id = curr_tab.attr('id');
         //Get the type of sensor we want to look at
-        chart.data.datasets = chart.data.datasets.concat(limits[tab_types[curr_tab.attr('id')]]);
+        chart.data.datasets = chart.data.datasets.concat(type_thresholds[tab_types[curr_tab.attr('id')]]);
         for(let id in series_types) {
             if(series_types[id] === tab_types[curr_tab.attr('id')]) {
                 chart.data.datasets.push(createDataSet(series_names[id], series_data[id], series_colors[id]));
@@ -283,6 +283,48 @@ function build_chart() {
         }
     }
     chart.update();
+}
+
+function is_threshold(selected_dataset: Chart.ChartDataSets){
+    /*
+    returns wether or not the selected dataset is a threshold dataset
+    */
+    let thresholds: Array<Chart.ChartDataSets> = [];
+    for(let type in type_thresholds) {
+        thresholds = thresholds.concat(type_thresholds[type]);
+    }
+    return !thresholds.every(threshold_dataset => !(threshold_dataset.label === selected_dataset.label));
+}
+
+function zoom(new_moment: moment.Moment) {
+    // let time_unit: string = $('#time_unit_select').val().toString();    //get selected unit of time the user selected
+    // let selected_index: number = $('#time_unit_select > option:selected').prevAll().length;
+    
+    // let new_selected_index: number = selected_index - 1;
+    // if(new_selected_index < 0){
+    //     new_selected_index = 0;
+    // }
+    // $('#time_unit_select > option').eq(selected_index).removeAttr('selected');
+    // $('#time_unit_select > option').eq(new_selected_index).attr('selected','selected');
+    
+    let time_unit: string = $('#time_unit_select').val().toString();
+    if(time_unit === 'hourly'){
+        $('#time_unit_select').val('hourly');
+    }
+    else if(time_unit === 'daily'){
+        $('#time_unit_select').val('hourly');
+    }
+    else if(time_unit === 'monthly'){
+        $('#time_unit_select').val('daily');
+    }
+    else if(time_unit === 'yearly'){
+        $('#time_unit_select').val('monthly');
+    }
+    // let time_select: JQuery<HTMLSelectElement>= $('#time_unit_select')
+
+    curr_datetime = new_moment;
+    $('#time_unit_select').change();
+
 }
 
 function request_data(adjust: boolean){
@@ -320,6 +362,25 @@ function request_data(adjust: boolean){
         }
     );
 }
+
+function vertical_line(clientX: number) {
+    let element = $("#cursor"), 
+    offsetLeft = element.offset().left,
+    domElement: any = element.get(0),
+    // clientX = event.clientX - offsetLeft;
+
+    // let htmlCanvas: any = element.get(0);
+    ctx = domElement.getContext('2d');
+ 
+    // ctx.clearRect(0, 0, domElement.width, domElement.height),
+    ctx.beginPath(),
+    ctx.moveTo(clientX - offsetLeft, 0),
+    ctx.lineTo(clientX - offsetLeft, domElement.height),
+    // ctx.setLineDash([10, 10]),
+    ctx.strokeStyle = "red",
+    ctx.stroke() 
+}
+
 // ------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------
 // Start doing everything
@@ -361,7 +422,6 @@ $(document).ready(function() {
             }
         });
     }).then(function() {
-
         // build the select options for the basestation dropdown
         for(let id in basestations){
             $('#basestation_select').append($('<option>', {
@@ -390,7 +450,12 @@ $(document).ready(function() {
         })
 
         $('#time_unit_select').change(function() {
+            // let selected_index: number = $('#time_unit_select > option:selected').prevAll().length;
             let time_unit: string = $('#time_unit_select').val().toString();    //get selected unit of time the user selected
+            // $('#time_unit_select > option').removeAttr('selected');
+            // $('#time_unit_select > option').eq(selected_index).attr('selected','selected');
+
+            // let time_unit: string = $('#time_unit_select').val().toString();    //get selected unit of time the user selected
 
             //find out which unit of time we are using and adjust the text + starting and finishing time
             for(let i = 0; i < time_vals.length; i++) {
@@ -427,7 +492,6 @@ $(document).ready(function() {
                 for(let gid in groups){
                     $('#group_select').append($('<option>', {
                         value: groups[gid].id,
-                        // text: '(' + groups[gid].id + ')' + ' ' + groups[gid].name,
                         text: '' + groups[gid].name,
                         title: groups[gid].description
                     }));    
@@ -444,7 +508,6 @@ $(document).ready(function() {
 
         $('#previous_btn').click(function() {
             //happens when we want to go backwards in time
-
             let time_unit: string = $('#time_unit_select').val().toString();
 
             for(let i = 0; i < time_vals.length; i++) {
@@ -462,7 +525,6 @@ $(document).ready(function() {
 
         $('#next_btn').click(function() {
             //happens when we want to go forwards in time
-
             let time_unit: string = $('#time_unit_select').val().toString();
 
             for(let i = 0; i < time_vals.length; i++) {
@@ -478,39 +540,34 @@ $(document).ready(function() {
             request_data(false);
         });
     });
+    
+    $("#cursor").attr('width', $("#chart").width());
+    $("#cursor").attr('height', $("#chart").height());
 
-    document.getElementById("chart").onclick = function(event){
+    $("#chart").dblclick(function(event) {
         // var activePoints = chart.getElementsAtEvent(event);
         let activePoint: {[id: number] : any} = chart.getElementAtEvent(event);
         // console.log(activePoint);
         if(Object.keys(activePoint).length != 0){
             let datasetIndex: number = activePoint[0]._datasetIndex;
             let pointIndex: number = activePoint[0]._index;
-            console.log(datasetIndex, pointIndex);
-            console.log(chart.data.datasets[datasetIndex].data[pointIndex]);
-        }
-        // use _datasetIndex and _index from each element of the activePoints array
-    };
-    // $("#cursor").width = $("#chart").width;
-    // $("#cursor").height = $("#chart").height;
-    $("#cursor").attr('width', $("#chart").width());
-    $("#cursor").attr('height', $("#chart").height());
-    $("#chart").on("mousemove", function(evt) {
-        var element = $("#cursor"), 
-                offsetLeft = element.offset().left,
-                domElement: any = element.get(0),
-                clientX = evt.clientX - offsetLeft,
-                htmlCanvas: any = element.get(0)
-                ctx = htmlCanvas.getContext('2d');
-         
-        ctx.clearRect(0, 0, domElement.width, domElement.height),
-            ctx.beginPath(),
-            ctx.moveTo(clientX, 0),
-            ctx.lineTo(clientX, domElement.height),
-            ctx.setLineDash([10, 10]),
-            ctx.strokeStyle = "#333",
-            ctx.stroke()
-    });
+            let selected_dataset: Chart.ChartDataSets = chart.data.datasets[datasetIndex];
+            let datasets: Array<Chart.ChartDataSets> = [];
+            
+            if(!is_threshold(selected_dataset)){
+                //if the selected dataset is not a threshold
+                let point: any = selected_dataset.data[pointIndex]
+                let new_moment: moment.Moment = moment(point.t); 
+                console.log(point);
+                console.log(new_moment.toString());
+                zoom(new_moment);
+            }
+            // let element: JQuery<Element> = $("#cursor");
+            // let domElement: any = element.get(0);
+            // let offsetLeft: number = element.offset().left;
 
+            // vertical_line(event.clientX);            
+        }
+    });
 });
 
