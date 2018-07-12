@@ -36,14 +36,14 @@ class GroupLabel extends ClickyComponent {
 		}
 
 		return (
-				<div className='row align-items-center'>
-			  		<div className = 'col-sm-10'>
-				        {this.text}
-			      	</div>
-			      	<div className = 'col=sm-1'>
-			      		{this.editButt}
-			      	</div>
-			    </div>
+			<div className='row align-items-center'>
+				<div className = 'col-sm-10'>
+					{this.text}
+				</div>
+				<div className = 'col=sm-1'>
+					{this.editButt}
+				</div>
+			</div>
 		);
 	}
 }

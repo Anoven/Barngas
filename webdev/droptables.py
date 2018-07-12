@@ -16,6 +16,7 @@ c.execute('''SET FOREIGN_KEY_CHECKS = 0;
 			drop table sensors;
 			drop table users;
 			drop table yearly_data;
+			drop tables notes;
 			SET FOREIGN_KEY_CHECKS = 0;
 			drop triggers;
 			''')

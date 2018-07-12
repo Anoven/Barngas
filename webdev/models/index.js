@@ -92,6 +92,16 @@ db['yearly_data'].belongsTo(db['group'], {foreignKey: 'group_id'});
 db['basestation'].hasMany(db['yearly_data'], {foreignKey: 'basestation_id'});
 db['yearly_data'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
 
+//data tables - each data entry is associated with a sensor, a basestation, and a group
+db['sensor'].hasMany(db['note'], {foreignKey: 'sensor_id'});
+db['note'].belongsTo(db['sensor'], {foreignKey: 'sensor_id'});
+
+db['group'].hasMany(db['note'], {foreignKey: 'group_id'});
+db['note'].belongsTo(db['group'], {foreignKey: 'group_id'});
+
+db['basestation'].hasMany(db['note'], {foreignKey: 'basestation_id'});
+db['note'].belongsTo(db['basestation'], {foreignKey: 'basestation_id'});
+
 console.log(db);
 db.sequelize = sequelize;
  

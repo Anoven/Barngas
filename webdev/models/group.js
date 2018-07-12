@@ -10,6 +10,9 @@ module.exports = function(sequelize, Sequelize) {
         },
         description: {
         	type: Sequelize.STRING
+        },
+        archived: {
+            type: Sequelize.BOOLEAN
         }
     });
     return Group;

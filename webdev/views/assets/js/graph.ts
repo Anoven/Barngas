@@ -297,15 +297,9 @@ function is_threshold(selected_dataset: Chart.ChartDataSets){
 }
 
 function zoom(new_moment: moment.Moment) {
-    // let time_unit: string = $('#time_unit_select').val().toString();    //get selected unit of time the user selected
-    // let selected_index: number = $('#time_unit_select > option:selected').prevAll().length;
-    
-    // let new_selected_index: number = selected_index - 1;
-    // if(new_selected_index < 0){
-    //     new_selected_index = 0;
-    // }
-    // $('#time_unit_select > option').eq(selected_index).removeAttr('selected');
-    // $('#time_unit_select > option').eq(new_selected_index).attr('selected','selected');
+    /*
+    Called when we want to zoom in on a specific time
+    */
     
     let time_unit: string = $('#time_unit_select').val().toString();
     if(time_unit === 'hourly'){
@@ -361,6 +355,13 @@ function request_data(adjust: boolean){
             }
         }
     );
+
+    $.post('/graph/notes', 
+        {time_unit: time_unit, start_date: start_date, end_date: end_date, b_id: b_id, g_id: g_id}, 
+        function(response) {
+            console.log(response.data);
+        }
+    );
 }
 
 function vertical_line(clientX: number) {
@@ -413,7 +414,7 @@ $(document).ready(function() {
                         if(data[i].basestation_id == first_id){
                             $('#group_select').append($('<option>', {
                                 value: data[i].id,
-                                text: '(' + data[i].id + ')' + ' ' + data[i].name,
+                                text:  data[i].name,
                                 title: data[i].description
                             })); 
                         }
@@ -437,25 +438,18 @@ $(document).ready(function() {
         //Set up Buttons and click events
         let time_vals: Array<string> = ['hourly', 'daily', 'monthly', 'yearly'];                //values of the time_selector
         let time_units: Array<moment.unitOfTime.StartOf> = ['hour', 'day', 'month', 'year'];    //viable units of time for moments
-
         $('.graph-link').click(function() {
             //When we click a tab - we want to open the tab and repopulate the graph with the data
             //relevant to this specific graph
             if(! $(this).hasClass('active')){
                 $('.graph-link').removeClass('active');
                 $(this).addClass('active')
-
                 build_chart();  
             }
         })
 
         $('#time_unit_select').change(function() {
-            // let selected_index: number = $('#time_unit_select > option:selected').prevAll().length;
             let time_unit: string = $('#time_unit_select').val().toString();    //get selected unit of time the user selected
-            // $('#time_unit_select > option').removeAttr('selected');
-            // $('#time_unit_select > option').eq(selected_index).attr('selected','selected');
-
-            // let time_unit: string = $('#time_unit_select').val().toString();    //get selected unit of time the user selected
 
             //find out which unit of time we are using and adjust the text + starting and finishing time
             for(let i = 0; i < time_vals.length; i++) {
@@ -465,9 +459,9 @@ $(document).ready(function() {
                     end_datetime = moment(curr_datetime).endOf(time_units[i]);
 
                     //edit the text on the previous and next buttons
-                    $("#previous_btn").prop('value', 'Prev. ' + time_units[i]);
-                    $("#next_btn").prop('value', 'Next ' + time_units[i]);
-                    
+                    let button_text: string = time_units[i].charAt(0).toUpperCase() + time_units[i].substr(1);
+                    $("#previous_btn").prop('value', 'Prev. ' + button_text);
+                    $("#next_btn").prop('value', 'Next ' + button_text);
                     break;        
                 }
             }
@@ -516,7 +510,6 @@ $(document).ready(function() {
                     curr_datetime.subtract(increment, time_units[i]);
                     start_datetime = moment(curr_datetime).startOf(time_units[i]);
                     end_datetime = moment(curr_datetime).endOf(time_units[i]);
-
                     break;        
                 }
             }
@@ -533,7 +526,6 @@ $(document).ready(function() {
                     curr_datetime.add(increment, time_units[i]);
                     start_datetime = moment(curr_datetime).startOf(time_units[i]);
                     end_datetime = moment(curr_datetime).endOf(time_units[i]);
-
                     break;    
                 }
             }
@@ -569,5 +561,16 @@ $(document).ready(function() {
             // vertical_line(event.clientX);            
         }
     });
+
+    $("#chart").click(function(event) {
+        // var activePoints = chart.getElementsAtEvent(event);
+        let activePoint: {[id: number] : any} = chart.getElementAtEvent(event);
+        // console.log(activePoint);
+        if(Object.keys(activePoint).length != 0){
+            console.log(activePoint[0]);         
+        }
+    });
+
+
 });
 
