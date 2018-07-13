@@ -13,6 +13,8 @@
 	<% include ./partials/nav %>
 
 	<div class="container-fluid padded">
+		<div id = 'root'></div>
+
 		<div class="row">
 			<div class="col-sm-12">
 				<button class = 'btn btn-info new-btn' data-toggle="modal" data-target= '#newLog'>
@@ -38,22 +40,28 @@
 							<div class="col-sm-6">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="dateInput">Date: </label>
-									<input type="date" class = 'date-input' id = 'dateInput'/> 
+									<input type="date" class = 'group-input less-padding' id = 'dateInput'/> 
 								</div>	
 							</div>
 							
 							<div class="col-sm-6">
 								<div class="input-group-prepend" style="float: right;">
 									<label class="input-group-text" for="timeInput">Time: </label>
-									<input type="time" class = 'time-input' id = 'timeInput'/>
+									<input type="time" class = 'group-input' id = 'timeInput'/>
 								</div>
 							</div>
 						</div>
 
 						<div class="row" style="margin-top: 15px;">
-							<div class="col-sm-12">
+							<div class="col-sm-6">
 								<div class="input-group-prepend">
-									<label class="input-group-text" for="dateInput">Group: </label>
+									<label class="input-group-text" for="basestation_select">Base Station: </label>
+									<select class="group-input" id = 'basestation_select'></select> 
+								</div>	
+							</div>
+							<div class="col-sm-6">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="group_select">Group: </label>
 									<select class="group-input" id = 'group_select'></select> 
 								</div>	
 							</div>
@@ -61,20 +69,20 @@
 
 						<div class="row" style="margin-top: 15px;">
 							<div class="col-sm-12">
-								<input type="text" class = 'text-input' name="">
+								<input type="text" class = 'text-input' id = 'textInput' name="">
 							</div>
 						</div>
 					</div>
 
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save</button>
+						<button type="button" class="btn btn-primary" id= 'saveBtn' disabled="true">Save</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div id = 'root'></div>
+		
 	</div>
 
 

@@ -9,7 +9,6 @@
     "compile:browserify": "npm run compile:browserify:graph && npm run compile:browserify:profile && npm run compile:browserify:configure",
     "compile:browserify:graph": "browserify ./views/assets/js/graph.js -o ./views/assets/js/graphbundle.js",
     "compile:browserify:profile": "browserify ./views/assets/js/profile.js -o ./views/assets/js/profilebundle.js",
-    "compile:browserify:configure": "browserify ./views/assets/js/config_basestation.js -o ./views/assets/js/basestationbundle.js && browserify ./views/assets/js/config_group.js -o ./views/assets/js/groupbundle.js && browserify ./views/assets/js/config_sensor.js -o ./views/assets/js/sensorbundle.js",
     "compile:browserify:configure": "browserify ./views/assets/js/log.js -o ./views/assets/js/logbundle.js",
     "build": "npm run compile",
     "prestart": "npm run build",

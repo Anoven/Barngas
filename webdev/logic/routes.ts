@@ -213,6 +213,30 @@ export default function routes_module(app: any, passport: any, models: any): any
         res.render("log");
     });
 
+    app.get("/log/notes",isLoggedIn, function(req: express.Request,res: express.Response){
+        let session: Express.Session = req.session;
+        
+        //GET THE USERS STUFF - we will use this later, but for now we will just use user_id = 1
+        // let user_id = session.passport.user
+        // console.log(user_id);
+        // let user_id: number = 1;
+        console.log(req.body);
+
+        models.sequelize.query(
+            ' SELECT n.updatedAt AS date, n.text AS text, n.id AS id, n.basestation_id AS bid, n.group_id AS gid, n.sensor_id AS sid' +
+            ' FROM notes AS n, basestations  AS b, users AS u' +
+            ' WHERE n.basestation_id = b.id AND b.user_id = u.id AND u.id = ' + user_id +
+            ' ORDER BY n.updatedAt;'
+        ).then(function(data: any) {
+            if(!data){
+                res.send({'data': []});
+            }
+            else {
+                res.send({'data': data[0]});
+            }
+        });
+        
+    });
 
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
@@ -232,7 +256,7 @@ export default function routes_module(app: any, passport: any, models: any): any
          models.sequelize.query(
             ' SELECT b.id as id, b.name AS name, b.description as description' +
                 ' FROM users AS u, basestations AS b' +
-                ' WHERE u.id = ' + user_id + ';'
+                ' WHERE b.user_id = u.id AND u.id = ' + user_id + ';'
         ).then(function(data: any) {
             if(!data){
                 res.send({'data': []});
@@ -254,7 +278,7 @@ export default function routes_module(app: any, passport: any, models: any): any
         models.sequelize.query(
             ' SELECT g.id AS id, g.name AS name, g.description as description, b.id AS basestation_id' +
                 ' FROM users AS u, basestations AS b, groups AS g' +
-                ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id AND archived = FALSE;'
+                ' WHERE b.user_id = u.id AND u.id = ' + user_id + ' AND b.id = g.basestation_id AND archived = FALSE;'
         ).then(function(data: any) {
             if(!data){
                 res.send({'data': []});
@@ -275,7 +299,7 @@ export default function routes_module(app: any, passport: any, models: any): any
         models.sequelize.query(
             ' SELECT s.id AS id, s.name AS name, s.description as description, s.type as type, g.id as group_id, b.id AS basestation_id' +
                 ' FROM users AS u, basestations AS b, groups AS g, sensors AS s' +
-                ' WHERE u.id = ' + user_id + ' AND b.id = g.basestation_id AND g.id = s.group_id;'
+                ' WHERE b.user_id = u.id AND u.id = ' + user_id + ' AND b.id = g.basestation_id AND g.id = s.group_id;'
         ).then(function(data: any) {
             if(!data){
                 res.send({'data': []});
