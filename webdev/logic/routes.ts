@@ -238,6 +238,21 @@ export default function routes_module(app: any, passport: any, models: any): any
         
     });
 
+    app.post('/log/addNote',isLoggedIn, function(req: express.Request,res: express.Response){
+        console.log(req.body);
+        if(req.body && req.body.text && req.body.bid && req.body.gid) {
+            let text = req.body.text;
+            let bid = req.body.bid;
+            let gid = req.body.gid;
+            models.sequelize.query(
+                ' INSERT INTO notes' +
+                    ' VALUES(NULL, "' + text + '", NOW(), NOW(), NULL, ' + gid + ', ' + bid+ ');'
+            ).then(function() {
+                res.send({'data': 'updated'});
+            });
+        }
+    });
+
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------
     // Configure Page

@@ -35,49 +35,52 @@
 						</button>
 					</div>
 
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-sm-6">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="dateInput">Date: </label>
-									<input type="date" class = 'group-input less-padding' id = 'dateInput'/> 
-								</div>	
+					<form method="POST" action ="" id = 'form'>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="input-group-prepend">
+										<label class="input-group-text" for="dateInput">Date: </label>
+										<input type="date" class = 'group-input less-padding' id = 'dateInput'/> 
+									</div>	
+								</div>
+								
+								<div class="col-sm-6">
+									<div class="input-group-prepend" style="float: right;">
+										<label class="input-group-text" for="timeInput">Time: </label>
+										<input type="time" class = 'group-input' id = 'timeInput'/>
+									</div>
+								</div>
 							</div>
-							
-							<div class="col-sm-6">
-								<div class="input-group-prepend" style="float: right;">
-									<label class="input-group-text" for="timeInput">Time: </label>
-									<input type="time" class = 'group-input' id = 'timeInput'/>
+
+							<div class="row" style="margin-top: 15px;">
+								<div class="col-sm-6">
+									<div class="input-group-prepend">
+										<label class="input-group-text" for="basestation_select">Base Station: </label>
+										<select class="group-input" id = 'basestation_select'></select> 
+									</div>	
+								</div>
+								<div class="col-sm-6">
+									<div class="input-group-prepend">
+										<label class="input-group-text" for="group_select">Group: </label>
+										<select class="group-input" id = 'group_select'></select> 
+									</div>	
+								</div>
+							</div>
+
+							<div class="row" style="margin-top: 15px;">
+								<div class="col-sm-12">
+									<input type="text" class = 'text-input' id = 'textInput' name="">
 								</div>
 							</div>
 						</div>
 
-						<div class="row" style="margin-top: 15px;">
-							<div class="col-sm-6">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="basestation_select">Base Station: </label>
-									<select class="group-input" id = 'basestation_select'></select> 
-								</div>	
-							</div>
-							<div class="col-sm-6">
-								<div class="input-group-prepend">
-									<label class="input-group-text" for="group_select">Group: </label>
-									<select class="group-input" id = 'group_select'></select> 
-								</div>	
-							</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<!-- <button type="button" class="btn btn-primary" id= 'saveBtn' disabled="true">Save</button> -->
+							<input type="submit" class="btn btn-primary" name="saveBtn" value="save" disabled="true" id='saveBtn'/>
 						</div>
-
-						<div class="row" style="margin-top: 15px;">
-							<div class="col-sm-12">
-								<input type="text" class = 'text-input' id = 'textInput' name="">
-							</div>
-						</div>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" id= 'saveBtn' disabled="true">Save</button>
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>

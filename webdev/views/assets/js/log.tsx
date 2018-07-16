@@ -162,15 +162,26 @@ $(document).ready(function() {
 
     $('#dateInput').change(function() {
     	to_log();
-    })
+    });
 
     $('#timeInput').change(function() {
     	to_log();
-    })
+    });
 
     $('#textInput').change(function() {
     	to_log();
-    })
+    });
+
+    $('#saveBtn').click(function() {
+        let text = $('#textInput').val();
+        let bid = $('#basestation_select').val();
+        let gid =  $('#group_select').val();
+        console.log(text, bid, gid);
+        $.post('/log/addNote', {text: text, bid: bid, gid: gid}, function (response) {
+            console.log(response.data);
+            document.location.reload();
+        })
+    });
 
 
 })
