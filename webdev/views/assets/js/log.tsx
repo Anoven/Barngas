@@ -61,6 +61,24 @@ class LogEntry extends React.Component<{bid: number, gid: number, sid: number, d
 	}
 }
 
+// class LogWrapper extends React.Component<{bid: number, gid: number, sid: number, date: string, text: string}, {bid: number, gid: number, sid: number, date: string, text: string}> {
+// 	constructor(props: any) {
+// 		super(props);
+// 		this.state = {bid: props.bid, gid: props.gid, sid: props.sid, date: props.date, text: props.text};
+// 	}
+
+// 	render() {
+// 		let entries: Array<JSX.Element> = []
+// 		for(let i = 0; i < 10; i ++) {
+// 			entries.push(<LogEntry bid = {bid} gid = {gid} sid = {sid} date = {date} text = {text} />, document.getElementById('root'));
+// 		}
+
+// 		return (
+
+// 		);
+// 	}
+// }
+
 function to_log() {
 	if($('#dateInput').val() && $('#timeInput').val() && $('#textInput').val()){
     	let datetime = new Date($('#dateInput').val().toString());
@@ -122,8 +140,9 @@ $(document).ready(function() {
         				let sid: number = Number(data[i].sid);
         				let date: string = data[i].date;
         				let text: string = data[i].text;
-        				ReactDOM.render(<LogEntry bid = {bid} gid = {gid} sid = {sid} date = {date} text = {text} />, document.getElementById('root'));
+        				// ReactDOM.render(<LogEntry bid = {bid} gid = {gid} sid = {sid} date = {date} text = {text} />, document.getElementById('root'));
         			}
+      				// ReactDOM.render(<LogWrapper data = data />);
         		}
         	});
         });
@@ -176,7 +195,9 @@ $(document).ready(function() {
         let text = $('#textInput').val();
         let bid = $('#basestation_select').val();
         let gid =  $('#group_select').val();
-        console.log(text, bid, gid);
+        let date = $('#dateInput').val();
+        let time = $('#timeInput').val();
+        console.log(text, bid, gid, date, time);
         $.post('/log/addNote', {text: text, bid: bid, gid: gid}, function (response) {
             console.log(response.data);
             document.location.reload();
