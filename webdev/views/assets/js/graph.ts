@@ -1,5 +1,6 @@
 import {Chart} from 'chart.js';
-import moment = require('moment');
+// import moment = require('moment');
+import * as moment from 'moment';
 import * as $ from 'jquery';
 
 import {Basestation, Group} from './util';
@@ -129,7 +130,7 @@ function createLabels(): Array<string> {
     return labels;
 }
 
-function createLabelsHelper(unit: moment.unitOfTime.StartOf, ticks: number, interval: any): Array<string> {
+function createLabelsHelper(unit: string, ticks: number, interval: any): Array<string> {
     /*
     Generate the labels for the x-axis
     @param ticks - the total number labels
@@ -437,7 +438,7 @@ $(document).ready(function() {
     }).then(function() {
         //Set up Buttons and click events
         let time_vals: Array<string> = ['hourly', 'daily', 'monthly', 'yearly'];                //values of the time_selector
-        let time_units: Array<moment.unitOfTime.StartOf> = ['hour', 'day', 'month', 'year'];    //viable units of time for moments
+        let time_units: Array<string> = ['hour', 'day', 'month', 'year'];    //viable units of time for moments
         $('.graph-link').click(function() {
             //When we click a tab - we want to open the tab and repopulate the graph with the data
             //relevant to this specific graph
@@ -455,11 +456,11 @@ $(document).ready(function() {
             for(let i = 0; i < time_vals.length; i++) {
                 if(time_unit === time_vals[i]) {
                     //update the current starting and finishing time of the data we are looking at
-                    start_datetime = moment(curr_datetime).startOf(time_units[i]);
-                    end_datetime = moment(curr_datetime).endOf(time_units[i]);
+                    start_datetime = moment(curr_datetime).startOf(time_units[i] as  moment.unitOfTime.StartOf);
+                    end_datetime = moment(curr_datetime).endOf(time_units[i]  as  moment.unitOfTime.StartOf);
 
                     //edit the text on the previous and next buttons
-                    let button_text: string = time_units[i].charAt(0).toUpperCase() + time_units[i].substr(1);
+                    let button_text: string = (<string>time_units[i]).charAt(0).toUpperCase() + (<string>time_units[i]).substr(1);
                     $("#previous_btn").prop('value', 'Prev. ' + button_text);
                     $("#next_btn").prop('value', 'Next ' + button_text);
                     break;        
@@ -508,8 +509,8 @@ $(document).ready(function() {
                 if(time_unit === time_vals[i]) {
                     let increment: any = 1;
                     curr_datetime.subtract(increment, time_units[i]);
-                    start_datetime = moment(curr_datetime).startOf(time_units[i]);
-                    end_datetime = moment(curr_datetime).endOf(time_units[i]);
+                    start_datetime = moment(curr_datetime).startOf(time_units[i] as moment.unitOfTime.StartOf);
+					end_datetime = moment(curr_datetime).endOf(time_units[i] as moment.unitOfTime.StartOf);
                     break;        
                 }
             }
@@ -524,8 +525,8 @@ $(document).ready(function() {
                 if(time_unit === time_vals[i]) {
                     let increment: any = 1;
                     curr_datetime.add(increment, time_units[i]);
-                    start_datetime = moment(curr_datetime).startOf(time_units[i]);
-                    end_datetime = moment(curr_datetime).endOf(time_units[i]);
+                    start_datetime = moment(curr_datetime).startOf(time_units[i] as moment.unitOfTime.StartOf);
+                    end_datetime = moment(curr_datetime).endOf(time_units[i] as moment.unitOfTime.StartOf);
                     break;    
                 }
             }
