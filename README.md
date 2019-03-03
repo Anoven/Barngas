@@ -22,3 +22,8 @@ to purge the db, run:
 To recreate the db, start up the server.
 To get the seeded data, run 
 `python3 seedDb.py`
+
+## DB info
+Updatingthe raw db should automatically trigger the other dbs to update based upon the values
+
+

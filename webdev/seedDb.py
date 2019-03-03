@@ -3,7 +3,7 @@ import pymysql.cursors
 import os
 
 
-conn = pymysql.connect(host="localhost", port = 3306, user = "root",passwd = "harv3str0b0tics", db = "barngas")
+conn = pymysql.connect(host="localhost", port = 3306, user = "admin",passwd = "stemyleafy", db = "barngas")
 c = conn.cursor()
 
 c.execute('DELETE FROM users WHERE username = "tester" AND first_name = "tester" AND last_name = "tester"')

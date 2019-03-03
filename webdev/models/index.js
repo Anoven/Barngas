@@ -3,7 +3,7 @@
 var fs = require("fs");
 var path = require("path");
 var Sequelize = require("sequelize");
-let sequelize = new Sequelize('barngas', 'root', 'harv3str0b0tics', {
+let sequelize = new Sequelize('barngas', 'admin', 'stemyleafy', {
     dialect: 'mysql',
     host: 'localhost'
 });
