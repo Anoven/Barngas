@@ -23,7 +23,9 @@ To recreate the db, start up the server.
 To get the seeded data, run 
 `python3 seedDb.py`
 
-## DB info
+## DB Info
 Updatingthe raw db should automatically trigger the other dbs to update based upon the values
 
+# Basestation To Server
 
+There is a tcp server which reads the data coming in and pushes to the database
