@@ -29,3 +29,17 @@ Updatingthe raw db should automatically trigger the other dbs to update based up
 # Basestation To Server
 
 There is a tcp server which reads the data coming in and pushes to the database
+
+## MQTT install
+
+sudo apt-add-repository ppa:mosquitto-dev/mosquitto-ppa
+sudo apt-get update
+sudo apt-get install mosquitto
+sudo apt-get install mosquitto-clients
+sudo pip3 install paho-mqtt
+
+## MQTT client
+
+The mqtt client has all the callback functiosnf or the nodes we designed already.
+Read the comments in the code.
+mqtt_tes.sh can be used to test the mqttclient.py
