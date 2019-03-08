@@ -24,7 +24,8 @@ from datetime import datetime
 import json
 
 class Data:
-    def __init__ (self, sensor_id, group_id, base_id, time, value):
+    def __init__ (self, str_type, sensor_id, group_id, base_id, time, value):
+        self.str_type = str_type
         self.sensor_id = sensor_id
         self.group_id = group_id
         self.base_id = base_id
@@ -53,12 +54,12 @@ class Data:
             raise Exception("Invalid Json!")
         return 0
 
-    def getJSON(self,msg):
+    def getJSON(self):
         tmp_json_dict = { "sensor_id" : self.sensor_id,
                           "group_id" : self.group_id,
                           "base_id" : self.base_id,
                           "time" : datetime.timestamp(self.time),
                           "value" : self.value
                         }
-        return 0
+        return json.dumps(tmp_json_dict)
 
