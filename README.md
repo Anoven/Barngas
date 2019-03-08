@@ -26,9 +26,9 @@ To get the seeded data, run
 ## DB Info
 Updatingthe raw db should automatically trigger the other dbs to update based upon the values
 
-# Basestation To Server
+#Server To DB
 
-There is a tcp server which reads the data coming in and pushes to the database
+There is a mqtt broker which runs in the background, and the mqttclient handles the data to read
 
 ## MQTT install
 
@@ -37,9 +37,12 @@ sudo apt-get update
 sudo apt-get install mosquitto
 sudo apt-get install mosquitto-clients
 sudo pip3 install paho-mqtt
+service start mosquitto 
 
 ## MQTT client
 
 The mqtt client has all the callback functiosnf or the nodes we designed already.
-Read the comments in the code.
+Read the comments in the code
 mqtt_tes.sh can be used to test the mqttclient.py
+
+
