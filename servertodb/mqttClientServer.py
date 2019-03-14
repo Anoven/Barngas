@@ -19,11 +19,21 @@ All the logic for checking alarms is handled here.
 Message received should be in JSON format and hence we should be directly be able to convert it
 the dataObj. This way its easy to add the database using the dbinterface.
 
+Supported Commands:
+    sensors/methane
+    sensors/amonia
+    sensors/temperature
+    sensors/hydrogensulfide
+    sensors/carbondioxide
+    sensors/humidity
+    basestation/# --> # = base_id
+
 Note: I know the different callbacks for each sensor may not be necessary, but I decided to do this
       because if the way they are tob e parsed is to change we can do that there.
 
 TODO:
     Add the alarm server logic
+    Move the passwords to enviornment variables
 
 """
 
@@ -38,7 +48,7 @@ class MqttClient(mqtt.Client):
     def __init__(self):
         mqtt.Client.__init__(self)
         self.connect("localhost", 1883, 60)
-        self.subscribe([("basestation/#",0),("sensors/methane", 0),("sensors/amonia",0),("sensors/temperature",0),("sensors/hydrogensulfide",0), ("sensors/carbondioxide", 0),("sensors/humidity",0)])
+        self.subscribe([("basestation/#/basedata",0),("sensors/methane", 0),("sensors/amonia",0),("sensors/temperature",0),("sensors/hydrogensulfide",0), ("sensors/carbondioxide", 0),("sensors/humidity",0)])
             
         self.message_callback_add("sensors/methane", self.on_message_methane) 
         self.message_callback_add("sensors/amonia", self.on_message_amonia)
@@ -46,7 +56,7 @@ class MqttClient(mqtt.Client):
         self.message_callback_add("sensors/hydrogensulfide", self.on_message_hydrogen_sulfide)
         self.message_callback_add("sensors/carbondioxide", self.on_message_carbon_dioxide)
         self.message_callback_add("sensors/humidity", self.on_message_humidity)
-        self.message_callback_add("basestation/#", self.on_message_basestation)
+        self.message_callback_add("basestation/#/basedata", self.on_message_basestation)
 
     def on_connect(self, mqttc, obj, flags, rc):
         self.db_controller = DBData("localhost", 3306, "admin", "stemyleafy")
