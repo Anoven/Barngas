@@ -37,7 +37,8 @@ TODO:
 
 """
 
-
+import sys
+sys.path.append("../common")
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from dataObj import Data
@@ -48,7 +49,7 @@ class MqttClient(mqtt.Client):
     def __init__(self):
         mqtt.Client.__init__(self)
         self.connect("localhost", 1883, 60)
-        self.subscribe([("basestation/#/basedata",0),("sensors/methane", 0),("sensors/amonia",0),("sensors/temperature",0),("sensors/hydrogensulfide",0), ("sensors/carbondioxide", 0),("sensors/humidity",0)])
+        self.subscribe([("basestation/+/basedata",0),("sensors/methane", 0),("sensors/amonia",0),("sensors/temperature",0),("sensors/hydrogensulfide",0), ("sensors/carbondioxide", 0),("sensors/humidity",0)])
             
         self.message_callback_add("sensors/methane", self.on_message_methane) 
         self.message_callback_add("sensors/amonia", self.on_message_amonia)

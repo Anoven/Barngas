@@ -12,6 +12,8 @@ This file is supposed to make writting to the db much easier
 for data coming from basestations. Use the Data class to represent
 the point value and pass that in add to the db.
 """
+import sys
+sys.path.append("../common/")
 import pymysql
 import pymysql.cursors
 from dataObj import Data
@@ -52,5 +54,5 @@ class DBData:
 if __name__ == "__main__":
     test = DBData("localhost", 3306, "admin", "stemyleafy")
     t_now = datetime.now()
-    point_1 = Data(1,2,2,t_now, 54)    
+    point_1 = Data("methane",1,2,2,t_now, 54)    
     test.insertDataPoint(point_1)
