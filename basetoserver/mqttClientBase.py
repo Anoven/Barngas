@@ -11,6 +11,8 @@ This file is supposed to be used for publishing messages to the server.
 In the future this could possibly be merged with mqttClientServer.
 Refer to mqttClientServer for more info.
 """
+import sys
+sys.path.append("../common")
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from dataObj import Data
