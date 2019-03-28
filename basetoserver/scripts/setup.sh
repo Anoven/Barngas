@@ -14,3 +14,10 @@ then
 else
 	echo "setup file does not exsist!"
 fi
+
+#set up mqtt libraries
+apt-get update
+apt-get install mosquitto
+apt-get install mosquitto-clients
+python3 -m pip install paho-mqtt
+service mosquitto start
