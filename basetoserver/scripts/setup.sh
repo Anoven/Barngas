@@ -7,7 +7,7 @@ if [ -f $CHROMESETUPFILE ]
 then
 	if [ $(grep -c "chromium" $CHROMESETUPFILE) -eq 0 ]
 	then
-		echo "chromium" >> $CHROMESETUPFILE
+		echo $CHROMESETUPCOMMAND >> $CHROMESETUPFILE
 	else
 		echo "chromium setup already!"
 	fi
