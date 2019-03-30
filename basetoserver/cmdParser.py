@@ -22,6 +22,8 @@ class BaseCmd(GeneralCmd):
     command = ""
     def __init__(self, json_msg):
         try:
+            if (type(json_msg) == bytes):
+                json_msg = json_msg.decode('utf-8')
             tmp_json = json.loads(json_msg)
             GeneralCmd.__init__(self,tmp_json["base_id"])
             self.command = tmp_json["cmd"]
@@ -33,6 +35,8 @@ class SensorCmd(GeneralCmd):
     command = ""
     def __init__(self, json_msg):
         try:
+            if(type(json_msg)==bytes):
+                json_msg = json_msg.decode('utf-8')
             tmp_json = json.loads(json_msg)
             GeneralCmd.__init__(self,tmp_json["base_id"])
             self.sensor_id = tmp_json["sensor_id"]

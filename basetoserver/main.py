@@ -14,6 +14,7 @@ the base_cmds.
 """
 from mqttClientBase import MqttClient
 import threading
+import os
 from time import *
 mqtt_client = None
 
@@ -33,10 +34,21 @@ def run_hardware():
                 print (mqtt_client.sensor_cmds.get().command)
         sleep(0.5) # 500 ms should be more than enough for our applications
 
+def run_sys():
+    global mqtt_client
+    while True:
+        if(mqtt_client!=None):
+            if(not mqtt_client.base_cmds.empty()):
+                parsedCmd = mqtt_client.base_cmds.get()
+                print(parsedCmd.command)
+                if (parsedCmd.command == "update"):
+                    os.system("/home/pi/Barngas/basetoserver/scripts/updatefirmware.sh")
+        sleep(0.5)
 
 if __name__ == "__main__":
     mqtt_t = threading.Thread(target = run_mqtt_client)
     hardware_t = threading.Thread(target = run_hardware)
+    sys_t = threading.Thread(target = run_sys)
     mqtt_t.start()
     hardware_t.start()
-
+    sys_t.start()

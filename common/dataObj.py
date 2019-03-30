@@ -39,6 +39,8 @@ class Data:
     
     def parseJSON(self,msg):
         try:
+            if (type(msg) == bytes):
+                msg = msg.decode("utf-8")
             tmp_json = json.loads(msg)
             self.sensor_id = tmp_json["sensor_id"]
             self.group_id = tmp_json["group_id"]
