@@ -1,3 +1,5 @@
+pon rogers
 BASESTATIONFOLDER=/home/pi/Barngas/basetoserver/
 cd $BASESTATIONFOLDER
-python3 main.py 
+python3 main.py
+
