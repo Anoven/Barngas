@@ -22,5 +22,9 @@ done
 echo $rc>>/home/pi/test.txt
 echo "couldn't connect to server! ">>/home/pi/test.txt
 
+## add the ssh agent
+eval `ssh-agent`
+ssh-add ~/.git_key
+
 exit 1
 
