@@ -1,7 +1,8 @@
 #!/bin/sh
 SETUP_MQTT=0
 SETUP_CHROMIUM=0
-SETUP_AUTOSTART=1
+SETUP_AUTOSTART=0
+SETUP_SCREEN=1
 
 CHROMESETUPFILE="/home/pi/.config/lxsession/LXDE-pi/autostart"
 CHROMESETUPCOMMAND="@/usr/bin/chromium-browser --kiosk --disable-restore-session-state http://138.197.156.151:3000/login"
@@ -43,4 +44,10 @@ then
 	else
 		echo "autostart setup already!"
 	fi
+fi
+
+if [ $SETUP_SCREEN -eq 1 ]
+then
+	#setup screen
+	sudo apt-get install screen
 fi
