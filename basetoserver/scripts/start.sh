@@ -14,8 +14,6 @@ do
 	cd $BASESTATIONFOLDER
 	echo "started!" >> /home/pi/test.txt
 	## add the ssh agent
-	eval `keychain --eval git_key`
-	echo "ssh agent started!" >> /home/pi/test.txt
 	python3 main.py&
 	exit 0
    fi
@@ -24,9 +22,6 @@ do
 done
 echo $rc>>/home/pi/test.txt
 echo "couldn't connect to server! ">>/home/pi/test.txt
-
-## add the ssh agent
-eval `keychain --eval git_key`
 
 exit 1
 
