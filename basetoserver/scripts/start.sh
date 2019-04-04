@@ -15,6 +15,8 @@ do
 	echo "started!" >> /home/pi/test.txt
 	## add the ssh agent
 	python3 main.py&
+	##reverse ssh to the server
+	sshpass -p "serverpassword"ssh -f -N -R 19999:localhost:22 root@138.197.156.151
 	exit 0
    fi
    count=$(($count-1))
