@@ -61,7 +61,29 @@ class MqttClient(mqtt.Client):
     def on_message(self, mqttc, obj, msg):
         print(msg.payload)
         return 0
-if __name__ == "__main__":
+
+class MqttClientSensorServer(mqtt.Client):
+    data_points = Queue(50)
+    def __init__(self):
+        mqtt.Client.__init__(self)
+        self.connect("localhost", 1883, 60)
+        self.subscribe("sensor/#",2)
+        self.message_callback_add("sensor/#",self.on_sensor_data)
+
+    def on_connect(self, mqttc, obj, flags, rc):
+        print("data client rc: "+str(rc))
+        return 0
+
+    def on_sensor_data(self, mqttc, obj, msg):
+        print("sensor data recvd"+ str(msg.payload)
+        datapoint = Data("temp",1,1,1,datetime.now(),-1)        #temporary array the parse should overwrite
+        try:
+            datapoint.parseJSON(msg.payload)
+            data_points.put(data_points, timeout = 5)
+        except Exception as e:
+            print("Exception: ", str(e))
+
+if __name__ == "__main__"
     test = MqttClient(1)
     methane_data_test = [Data("methane",1,1,1,datetime.now(),123),Data("amonia",1,1,1,datetime.now(),36)]
     #test.publish_sensor_reading(methane_data_test)
