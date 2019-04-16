@@ -15,6 +15,7 @@ dataObj Json convention
     sensor_id : integer
     group_id : integer
     base_id : integer
+    type: string
     time : POSIX timestamp
     value : integer
 }
@@ -46,6 +47,7 @@ class Data:
             self.group_id = tmp_json["group_id"]
             self.base_id = tmp_json["base_id"]
             self.time = datetime.fromtimestamp(tmp_json["time"])
+            self.str_type = tmp_json["type"]
             self.value = tmp_json["value"]
             self.year = self.time.year
             self.month = self.time.month
@@ -59,6 +61,7 @@ class Data:
     def getJSON(self):
         tmp_json_dict = { "sensor_id" : self.sensor_id,
                           "group_id" : self.group_id,
+                          "type": self.str_type,
                           "base_id" : self.base_id,
                           "time" : datetime.timestamp(self.time),
                           "value" : self.value
