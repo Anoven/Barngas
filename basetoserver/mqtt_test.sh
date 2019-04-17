@@ -20,11 +20,15 @@ test_base_to_server()
 	mosquitto_pub -h 0.0.0.0 -p 1883 -t 'sensor/1' -m "$json_value_1" -q 2
 	echo $json_value_1
 }
-
+update()
+{
+	json_value_2="{\"sensor_id\": 1,\"group_id\": 1,\"base_id\": 1,\"cmd\": \"update\"}"
+	mosquitto_pub -h 0.0.0.0 -p 1883 -t 'basestation/1/basecmd' -m "$json_value_2" -q 2	
+}
 usage()
 {
 	echo "mqtt_test.sh <command>"
-	echo " 				command: b2s, s2b, help"
+	echo " 				command: b2s, s2b, update, help"
 }
 
 case "$1" in
@@ -36,6 +40,9 @@ case "$1" in
 		;;
 	s2b)
 		test_server_to_base
+		;;
+	update)
+		update
 		;;
 	*)
 		usage
