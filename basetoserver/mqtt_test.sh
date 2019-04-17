@@ -16,8 +16,8 @@ test_server_to_base()
 
 test_base_to_server()
 {
-	json_value_1="{\"sensor_id\": 1, \"group_id\": 1, \"base_id\": 1, \"type\": \"methane\", \"value\": 10, \"time\": 1555389572}"
-#	mosquitto_pub -h 0.0.0.0 -p 1883 -t 'sensor/1' -m "$json_value_1" -q 2
+	json_value_1="{\"sensor_id\": 1, \"group_id\": 1, \"base_id\": 1, \"type\": \"methane\", \"value\": 15, \"time\": 1555389573}"
+	mosquitto_pub -h 0.0.0.0 -p 1883 -t 'sensor/1' -m "$json_value_1" -q 2
 	echo $json_value_1
 }
 
