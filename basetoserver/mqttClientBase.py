@@ -85,6 +85,7 @@ class MqttClientSensorServer(mqtt.Client):
         self.message_callback_add("7c332c08",self.on_rh_data)
         self.message_callback_add("339e5d61", self.on_hs_data)
         self.message_callback_add("237f51ab", self.on_methane_data)
+        self.message_callback_add("237f5c02", self.on_carbon_data)
 
     def on_connect(self, mqttc, obj, flags, rc):
         print("data client rc: "+str(rc))
@@ -120,6 +121,10 @@ class MqttClientSensorServer(mqtt.Client):
         datapoint = MethaneData(msg.payload)
         self.data_points.put(datapoint, timeout = 5)
 
+    def on_carbon_data(self, mqttc, obj, msg):
+        print("carbon data recvd" + str(msg.payload))
+        datapoint = CarbonDioxideData(msg.payload)
+        self.data_points.put(datapoint, timeout = 5)
 
 if __name__ == "__main__":
     test = MqttClient(1)
