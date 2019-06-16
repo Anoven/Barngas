@@ -65,7 +65,7 @@ class MqttClient(mqtt.Client):
         print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
         data = Data("methane",-1,-1,-1,datetime.now(),-1) # default object since we are parsing from JSON
         try:
-            data.parseJSON(msg.payload.decode('utf-8')) 
+            data.parseJSON(msg.payload.decode('utf-8'))
             self.db_controller.insertDataPoint(data)
         except Exception as e:
             print("Exception : ", str(e))

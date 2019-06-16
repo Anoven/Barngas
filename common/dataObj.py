@@ -68,3 +68,80 @@ class Data:
                         }
         return json.dumps(tmp_json_dict)
 
+class TemperatureData(Data):
+    def __init__(self, json_msg):
+        if (type(json_msg) == bytes):
+            json_msg = json_msg.decode('utf-8')
+        tmp_json = json.loads(json_msg)
+        str_type = "temperature"
+        sensor_id = int(tmp_json["nodeId"],16)
+        group_id = 1
+        base_id = 1
+        time = datetime.now()
+        value = tmp_json["temperature"]
+        Data.__init__(self,str_type,sensor_id, group_id, base_id, time, value)
+
+class RelativeHumData(Data):
+    def __init__(self, json_msg):
+        if(type(json_msg)==bytes):
+            json_msg = json_msg.decode('utf-8')
+        tmp_json = json.loads(json_msg)
+        str_type = "relative_humidity"
+        sensor_id = int(tmp_json["nodeId"],16)
+        group_id = 1
+        base_id = 1
+        time = datetime.now()
+        value = tmp_json["hummidity"]
+        Data.__init__(self,str_type,sensor_id,group_id,base_id,time, value)
+
+class HydrogenSulfideData(Data):
+    def __init__(self, json_msg):
+        if(type(json_msg)==bytes):
+            json_msg = json_msg.decode('utf-8')
+        tmp_json = json.loads(json_msg)
+        str_type = "hydrogen_sulfide"
+        sensor_id = int(tmp_json["nodeId"],16)
+        group_id = 1
+        base_id = 1
+        time = datetime.now()
+        value = tmp_json["hsLevel"]
+        Data.__init__(self,str_type, sensor_id, group_id, base_id, time, value)
+
+class MethaneData(Data):
+    def __init__(self, json_msg):
+        if (type(json_msg)==bytes):
+            json_msg = json_msg.decode('utf-8')
+        tmp_json = json.loads(json_msg)
+        str_type = "methane"
+        sensor_id = int(tmp_json["nodeId"],16)
+        group_id = 1
+        base_id = 1
+        time = datetime.now()
+        value = tmp_json["methane"]
+        Data.__init__(self,str_type,sensor_id,group_id,base_id,time,value)
+
+class CarbonDioxideData(Data):
+    def __init__(self, json_msg):
+        if (type(json_msg)==bytes):
+            json_msg = json_msg.decode('utf-8')
+        tmp_json = json.loads(json_msg)
+        str_type = "carbon_dioxide"
+        sensor_id = int(tmp_json["nodeId"],16)
+        group_id = 1
+        base_id = 1
+        time = datetime.now()
+        value = tmp_json["cdLevel"]
+        Data.__init__(self,str_type,sensor_id,group_id,base_id,time,value)
+ 
+class AmmoniaData(Data):
+    def __init__(self, json_msg):
+        if (type(json_msg)==bytes):
+            json_msg = json_msg.decode('utf-8')
+        tmp_json = json.loads(json_msg)
+        str_type = "ammonia"
+        sensor_id = int(tmp_json["nodeId"],16)
+        group_id = 1
+        base_id = 1
+        time = datetime.now()
+        value = tmp_json["ammonia"]
+        Data.__init__(self,str_type,sensor_id,group_id,base_id,time,value)
