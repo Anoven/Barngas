@@ -32,17 +32,17 @@ Note: I know the different callbacks for each sensor may not be necessary, but I
       because if the way they are tob e parsed is to change we can do that there.
 
 TODO:
-    Add the alarm server logic
-    Move the passwords to enviornment variables
 
 """
 
 import sys
 sys.path.append("../common")
+import os
 import paho.mqtt.client as mqtt
 from datetime import datetime
 from dataObj import Data
 from dbinterface import DBData
+from alarmSys import AlarmSys
 
 class MqttClient(mqtt.Client):
     db_controller = None
@@ -50,12 +50,14 @@ class MqttClient(mqtt.Client):
         mqtt.Client.__init__(self)
         self.connect("localhost", 1883, 60)
         self.subscribe([("basestation/+/basedata",2),("sensors/+", 2)])
-        
+                
         self.message_callback_add("sensors/+", self.on_message_sensor)
         self.message_callback_add("basestation/+/basedata", self.on_message_basestation)
 
+        self.alarm_sys = AlarmSys()
+
     def on_connect(self, mqttc, obj, flags, rc):
-        self.db_controller = DBData("localhost", 3306, "admin", "stemyleafy")
+        self.db_controller = DBData("localhost", 3306, os.environ['SQLUSER'], os.environ['SQLPASS'])
         print("rc: "+str(rc))
 
     def on_message_basestation(self, mqttc, obj, msg):
@@ -64,11 +66,12 @@ class MqttClient(mqtt.Client):
     def on_message_sensor(self, mqttc, obj, msg):
         print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
         data = Data("methane",-1,-1,-1,datetime.now(),-1) # default object since we are parsing from JSON
-        try:
-            data.parseJSON(msg.payload.decode('utf-8'))
-            self.db_controller.insertDataPoint(data)
-        except Exception as e:
-            print("Exception : ", str(e))
+#       try:
+        data.parseJSON(msg.payload.decode('utf-8'))
+        self.db_controller.insertDataPoint(data)
+        self.alarm_sys.checkValue(data)
+#        except Exception as e:
+#            print("Exception : ", str(e))
    
     def on_message(self, mqttc, obj, msg):
         printf("undefined message received")

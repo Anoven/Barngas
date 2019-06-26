@@ -15,7 +15,8 @@ from dbinterface import DBData
 BASESTATION = 1
 SENSOR = 2
 GROUP = 3
-EXIT = 4
+USER = 4
+EXIT = 5
 
 CREATE = 1
 DELETE = 2
@@ -23,7 +24,12 @@ LIST = 3
 db = DBData("localhost", 3306, "admin", "stemyleafy")
 
 while True:
-    print("what would you like to create? (1-4)\n \t 1. Basestation \n\t 2. Sensor \n\t 3. Group \n\t 4. Exit")
+    print("""What would you like to create? (1-5)
+    %d. Basestation 
+    %d. Sensor 
+    %d. Group
+    %d. User
+    %d. Exit"""%(BASESTATION,SENSOR,GROUP,USER,EXIT))
     obj_to_create = None
     try:
         obj_to_create = int(input())
@@ -61,14 +67,15 @@ while True:
                 description = input("Enter description:\n")
                 base_id = int(input("Enter basestation id:\n"))
                 group_id = int(input("Enter group id:\n"))
-                db.newSensor(sensor_id,sensor_type,name,description,group_id,base_id)
+                threshold = int(input("Enter threshold:\n"))
+                db.newSensor(sensor_id,sensor_type,name,description,group_id,base_id,threshold)
                 print("sensor created!")
             elif (option == DELETE):
                 sensor_id = int(input("Enter sensor id:\n"))
                 db.deleteSensor(sensor_id)
                 print("sensor deleted")
             elif (option == LIST):
-                db.listSensors();
+                db.listSensors()
             else:
                 print ("invalid input")
                 break
@@ -76,5 +83,28 @@ while True:
             print(e)
     elif obj_to_create == GROUP:
         print("creating new group!")
+    elif obj_to_create == USER:
+        try:
+            option = int(input("What would you like to do?\n\t 1. Create \n\t 2. Delete\n\t 3. List\n"))
+            if (option == CREATE):
+#                u_name = input("Enter username:\n")
+#                f_name = input("Enter first name:\n")
+#                l_name = input("Enter last name:\n")
+#                email = input("Enter email:\n")
+#                phonenumber = input("Enter phone number:\n")
+#                password = input("Enter password:\n")
+#                db.insertUser(f_name, l_name, email, u_name, phonenumber, password)
+#                print("user created!")
+                print("not implemented yet use the website!")
+            elif (option == DELETE):
+                user_id = int(input("Enter the id of the user:\n"))
+                db.deleteUser(user_id)
+            elif (option == LIST):
+                db.listUsers()
+            else:
+                print("invalid input")
+        except Exception as e:
+            print(e)
+
     elif obj_to_create == EXIT:
         break
