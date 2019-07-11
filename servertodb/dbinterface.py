@@ -34,13 +34,13 @@ class DBData:
         self.c.execute('INSERT INTO basestations (name, description, createdAt,updatedAt,user_id) VALUES("%s","%s",%s,%s,%d);'%(str(name), str(description),"NOW()","NOW()",1))
         self.conn.commit()
 
-    def newSensor(self, sensor_id, str_type, name, description, group_id, base_id, threshold):
+    def newSensor(self, sensor_id, str_type, name, description, group_id, base_id):
         self.deleteSensor(sensor_id)
         possible_sensors = ["METHANE","TEMP","HUMIDITY","HYDROGEN SULFIDE","AMMONIA", "CARBON DIOXIDE"]
         if str_type not in possible_sensors:
             print("invalid name!")
             return 
-        self.c.execute('INSERT INTO sensors VALUES (%d,"%s","%s","%s",NOW(),NOW(),%d,%d, %d);'%(sensor_id, str_type, name,description, group_id, base_id,threshold))
+        self.c.execute('INSERT INTO sensors VALUES (%d,"%s","%s","%s",NOW(),NOW(),%d,%d,NULL);'%(sensor_id, str_type, name,description, group_id, base_id))
         self.conn.commit()
 
     def insertDataPoint(self, sensor_obj):
@@ -101,6 +101,14 @@ class DBData:
         self.c.execute("SELECT * from sensors WHERE id=%d;"%(sensor_id))
         sensor = self.c.fetchone()
         return sensor
+
+    def setThreshold(self, sensor_id, threshold):
+        self.c.execute("UPDATE sensors SET threshold=%d WHERE id=%d;"%(threshold, sensor_id))
+        self.conn.commit()
+    
+    def updateName(self, sensor_id, name):
+        self.c.execute("UPDATE sensors SET name='%s' WHERE id=%d;"%(name, sensor_id))
+        self.conn.commit()
 
 if __name__ == "__main__":
     test = DBData("localhost", 3306, "admin", "stemyleafy")

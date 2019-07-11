@@ -31,7 +31,7 @@ class  AlarmSys(AlarmInterface):
     def sendMessage(self, dataValue):
         sql_data = DBData("localhost", 3306, os.environ['SQLUSER'],os.environ['SQLPASS']) 
         sensor = sql_data.getSensor(dataValue.sensor_id)
-        for user in self.sql_data.getUsers():
+        for user in sql_data.getUsers():
             msg = """Attention!
 The reading from the following sensor is reporting a unusual value.
 Sensor

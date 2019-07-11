@@ -21,6 +21,8 @@ EXIT = 5
 CREATE = 1
 DELETE = 2
 LIST = 3 
+THRESHOLD = 4
+NAME = 5
 db = DBData("localhost", 3306, "admin", "stemyleafy")
 
 while True:
@@ -58,17 +60,16 @@ while True:
 
     elif obj_to_create == SENSOR:
         try:
-            option = int(input("What would you like to do?\n\t 1. Create \n\t 2. Delete\n\t 3. List\n"))
+            option = int(input("What would you like to do?\n\t 1. Create \n\t 2. Delete\n\t 3. List\n\t 4. Threshold\n\t 5. Name\n"))
             if (option == CREATE):
                 possible_sensor_types = ["METHANE","TEMP","HUMIDITY","CARBON DIOXIDE","HYDROGEN SULFIDE","AMMONIA"]
-                sensor_id = int(input("Enter sensor id:"))
+                sensor_id = int(input("Enter sensor id:\n"))
                 sensor_type = possible_sensor_types[int(input("Sensor type:\n\t 0. METHANE \n\t 1. TEMPERATURE \n\t 2. RELATIVE HUMIDITY \n\t 3. CARBON DIOXIDE \n\t 4. HYDROGEN SULFIDE \n\t 5. AMMONIA\n"))]
                 name = input("Enter name:\n")
                 description = input("Enter description:\n")
                 base_id = int(input("Enter basestation id:\n"))
                 group_id = int(input("Enter group id:\n"))
-                threshold = int(input("Enter threshold:\n"))
-                db.newSensor(sensor_id,sensor_type,name,description,group_id,base_id,threshold)
+                db.newSensor(sensor_id,sensor_type,name,description,group_id,base_id)
                 print("sensor created!")
             elif (option == DELETE):
                 sensor_id = int(input("Enter sensor id:\n"))
@@ -76,6 +77,14 @@ while True:
                 print("sensor deleted")
             elif (option == LIST):
                 db.listSensors()
+            elif (option == THRESHOLD):
+                sensor_id = int(input("Enter sensor id:\n"))
+                threshold = int(input("Enter threshold:\n"))
+                db.setThreshold(sensor_id, threshold)
+            elif (option == NAME):
+                sensor_id = int(input("Enter sensor id:\n"))
+                name = input("Enter new name:\n")
+                db.updateName(sensor_id,name)
             else:
                 print ("invalid input")
                 break
